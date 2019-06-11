@@ -8,7 +8,12 @@ let mainWindow = null;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({webPreferences: { webSecurity: false }});
+  mainWindow = new BrowserWindow({
+    frame: false,
+    webPreferences: { 
+      webSecurity: false 
+    }
+  });
   //mainWindow.setMenu(null)
   mainWindow.maximize();
 
@@ -32,6 +37,22 @@ ipcMain.on('download', (event, data) => {
     }
   });
 });
+
+ipcMain.on("close", () => {
+  mainWindow.close();
+})
+
+ipcMain.on("toggleMaximize", () => {
+  if(mainWindow.isMaximized()){
+    mainWindow.unmaximize()
+  } else {
+    mainWindow.maximize()
+  }
+})
+
+ipcMain.on("minimize", () => {
+  mainWindow.minimize();
+})
 
 ipcMain.on('upload', (event, imageData, creds, description) => {  
   imageData = imageData.replace(/^data:image\/png;base64,/, "");

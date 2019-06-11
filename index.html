@@ -11,6 +11,20 @@
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Lato:900" rel="stylesheet">
         <style>
+            svg {
+                height: 30px !important;
+            }
+
+            .titlebar{
+                background: rgba(0, 0, 0, 0.3);
+            }
+
+            body{
+                background: var(--dark);
+                color: white;
+                overflow: hidden;
+            }
+
             .main{
                 position: relative;
                 width: 1080px;
@@ -78,49 +92,68 @@
                 position:absolute;
                 z-index: 10000;
             }    
+
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+            ::-webkit-scrollbar-button {
+                display: none;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.25);
+            }
+            ::-webkit-scrollbar-track {
+                display: none;
+            }
         </style>
     </head>
     <body>
-        <div class="container mt-4">
-            <h1 class="mb-4">Social Plab v1.0.0</h1>
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="main mb-4" id="full-picture">
-                        <div class="text align-self-center"></div>
-                        <img src="logo.png" class="logo">
-                        <img src="marco.png" class="nice-border">
-                        <div class="mask d-flex justify-content-center">
-                            <img class="pic">
+        <div id="title-bar"></div>
+        <div class="container-fluid pb-2 pt-3" style="overflow-y: scroll; height: calc(100% - 32px)">
+            <div class="container">
+                <h1>Social Plab v1.0.1</h1>
+                <div class="row justify-content-center">
+                    <div class="col-lg-12 col-xl-6 justify-content-center d-flex">
+                        <div class="main mb-4" id="full-picture">
+                            <div class="text align-self-center"></div>
+                            <img src="logo.png" class="logo">
+                            <img src="marco.png" class="nice-border">
+                            <div class="mask d-flex justify-content-center">
+                                <img class="pic">
+                            </div>
+                            <img class="pic-blured">
                         </div>
-                        <img class="pic-blured">
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="bg">URL Fondo</label>
-                        <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
+                    <div class="col-lg-12 col-xl-6">
+                        <div class="form-group">
+                            <label for="bg">URL Fondo</label>
+                            <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Texto</label>
+                            <input class="form-control" placeholder="Texto" id="text" value="Did you know that Kingdom Heart 3 is overrated?">
+                        </div>
+                        <div class="form-group">
+                            <label for="fontsize">Tamaño fuente</label>
+                            <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Descripción de Instagram</label>
+                            <textarea class="form-control" placeholder="Descripción" id="description"></textarea>
+                        </div>
+            
+                        <button class="btn btn-primary" onclick="download(false)">Descargar</button>
+                        <button class="btn btn-outline-primary" onclick="download(true)">Subir a Instagram</button>
                     </div>
-                    <div class="form-group">
-                        <label for="text">Texto</label>
-                        <input class="form-control" placeholder="Texto" id="text" value="Did you know that Kingdom Heart 3 is overrated?">
-                    </div>
-                    <div class="form-group">
-                        <label for="fontsize">Tamaño fuente</label>
-                        <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
-                    </div>
-                    <div class="form-group">
-                        <label for="text">Descripción de Instagram</label>
-                        <textarea class="form-control" placeholder="Descripción" id="description"></textarea>
-                    </div>
-        
-                    <button class="btn btn-primary" onclick="download(false)">Descargar</button>
-                    <button class="btn btn-outline-primary" onclick="download(true)">Subir a Instagram</button>
                 </div>
             </div>
         </div>
 
         <script>
             const htmlToImage = require('html-to-image');
+            const ElectronTitlebarWindows = require('electron-titlebar-windows');
+            const titlebar = new ElectronTitlebarWindows({darkMode: true, draggable: true, fullscreen: true});
+            titlebar.appendTo(document.getElementById("title-bar"));
 
             $(document).ready(()=>{
                 applyChanges();
@@ -198,6 +231,22 @@
                     Swal.fire("Error",`Ocurrió un error al intentar guardar la imagen.`,"error");
                 }
             })
+
+            titlebar.on('close', function(e) {
+                ipcRenderer.send("close");
+            });
+
+            titlebar.on('maximize', function(e) {
+                ipcRenderer.send("toggleMaximize");
+            });
+
+            titlebar.on('fullscreen', function(e) {
+                ipcRenderer.send("toggleMaximize");
+            });
+
+            titlebar.on('minimize', function(e) {
+                ipcRenderer.send("minimize");
+            });
         </script>
     </body>
 </html>
