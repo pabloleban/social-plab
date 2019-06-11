@@ -1,19 +1,218 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <head>
+        <meta charset="UTF-8">
+        <script>
+            window.$ = window.jQuery = require('jquery');
+            var {ipcRenderer, remote} = require('electron');
+            require("bootstrap")
+            const Swal = require('sweetalert2')
+        </script>
 
-    <script>
-      // You can also require other files to run in this process
-      require('./renderer.js')
-    </script>
-  </body>
+        <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lato:900" rel="stylesheet">
+        <style>
+            .main{
+                position: relative;
+                width: 1080px;
+                height: 1080px;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                zoom: 0.5;
+            }
+
+            .pic-blured{
+                filter: blur(10px) brightness(50%);
+                height: 100%;
+                position: absolute;
+            }
+
+            .pic {
+                position: absolute;
+                top: 90px;
+                padding: 0px 50px;
+            }
+
+            .mask{
+                clip-path: inset(80px 50px 370px 50px);
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                z-index: 10;
+                left: 0;
+            }
+
+            .text{
+                width: 90%;
+                text-align: center;
+                color: #ffffff;
+                height: 300px;
+                padding: 5% 10%;
+                z-index: 100;
+                bottom: 0;
+                font-weight: 900;
+                display: flex;
+                align-items: center;
+                position: absolute;
+                word-break: break-word;
+                text-shadow: 3px 4px #000000;
+                font-family: 'Lato', sans-serif !important;
+            }
+
+            .logo{
+                position: absolute;
+                z-index: 100;
+                bottom: 695px;
+            }
+
+            .nice-border{
+                position: absolute;
+                z-index: 110;
+                height: 1035px;
+                width: 100%;
+                pointer-events: none;
+            }
+            
+            .detail{
+                position:absolute;
+                z-index: 10000;
+            }    
+        </style>
+    </head>
+    <body>
+        <div class="container mt-4">
+            <h1 class="mb-4">Social Plab</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="main mb-4" id="full-picture">
+                        <div class="text align-self-center"></div>
+                        <img src="logo.png" class="logo">
+                        <img src="marco.png" class="nice-border">
+                        <div class="mask d-flex justify-content-center">
+                            <img class="pic">
+                        </div>
+                        <img class="pic-blured">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                        <button class="btn mb-2" id="instagram-creds" onclick="instagramSetup()"></button>
+
+                        <div class="form-group">
+                            <label for="bg">URL Fondo</label>
+                            <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Texto</label>
+                            <input class="form-control" placeholder="Texto" id="text" value="Did you know that Kingdom Heart 3 is overrated?">
+                        </div>
+                        <div class="form-group">
+                            <label for="fontsize">Tamaño fuente</label>
+                            <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Descripción de Instagram</label>
+                            <textarea class="form-control" placeholder="Descripción" id="description"></textarea>
+                        </div>
+            
+                        <button class="btn btn-primary" onclick="download(false)">Descargar</button>
+                        <button class="btn btn-outline-primary" onclick="download(true)">Subir a Instagram</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const html2canvas = require("html2canvas")
+            var htmlToImage = require('html-to-image');
+
+            $(document).ready(()=>{
+                applyChanges();
+                checkInstagramCreds();
+                $("input").on("input", () => { applyChanges() })
+            });
+
+            const checkInstagramCreds = () => {
+                if(localStorage.getItem("instagram")){
+                    $("#instagram-creds").removeClass("btn-danger")
+                    $("#instagram-creds").addClass("btn-success")
+                    $("#instagram-creds").text("Instagram configurado")
+                } else {
+                    $("#instagram-creds").addClass("btn-danger")
+                    $("#instagram-creds").removeClass("btn-sucess")
+                    $("#instagram-creds").text("Instagram no configurado")
+                }
+            }
+
+            const instagramSetup = () => {
+
+                Swal.mixin({
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off',
+                        required: "on"
+                    },
+                    showCancelButton: true,
+                    cancelButtonText: "Cancelar",
+                    confirmButtonText: "Continuar",
+                    progressSteps: ['1', '2']
+                }).queue([{
+                    title: 'Usuario de Instagram',
+                    input: 'text',
+                    inputPlaceholder: 'Ingresá el usuario',
+                }, {
+                    title: 'Password de Instagram',
+                    input: 'password',
+                    inputPlaceholder: 'Ingresá la password',
+                    confirmButtonText: "Finalizar"
+                }]).then(result => {
+                    console.log(result)
+                    if(result.value[0] && result.value[1]){
+                        localStorage.setItem("instagram", JSON.stringify({username: result.value[0], password: result.value[1]}));
+                    }
+                    checkInstagramCreds();
+                })
+            }
+
+            const applyChanges = () => {
+                const newText = $("#text").val().trim();
+                const newBg = $("#bg").val().trim();
+                const fontSize = $("#fontsize").val();
+                if(newText!= ""){
+                    $(".text").text(newText)
+                }
+
+                if(newBg != ""){
+                    $(".pic, .pic-blured").attr("src", newBg);
+                    $(".pic").on("load", function() {
+                        const height = this.naturalHeight;
+                        const width = this.width;
+
+                        if(height > width){
+                            $(".pic").width("1080px")
+                        } else {
+                            $(".pic").height("610px")
+                        }
+                    })
+                }
+
+                $(".text").css("font-size", fontSize+"px");
+            }
+
+            const download = upload => {
+                $("#full-picture").css("zoom","1");
+                htmlToImage.toPng(document.getElementById('full-picture'), {width: 1080, height: 1080}).then(dataUrl => {
+                    $("#full-picture").css("zoom","");
+                    if(upload){
+                        if(!localStorage.getItem("instagram")){
+                            Swal.fire("Error","No podés subir una imagen a Instagram hasta que no configures tus credenciales.","error")
+                        } else{
+                            ipcRenderer.send("upload", dataUrl, localStorage.getItem("instagram"));
+                        }
+                    } else {
+                        ipcRenderer.send("download", dataUrl);
+                    }
+                });
+            }
+        </script>
+    </body>
 </html>
