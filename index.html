@@ -209,8 +209,10 @@
                     return;
                 }
                 $("#full-picture").css("zoom","1");
+                $("#full-picture").css("position","absolute");
                 htmlToImage.toPng(document.getElementById('full-picture'), {width: 1080, height: 1080}).then(dataUrl => {
                     $("#full-picture").css("zoom","");
+                    $("#full-picture").css("position","relative");
                     if(upload){
                         ipcRenderer.send("upload", dataUrl);
                     } else {
