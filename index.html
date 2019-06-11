@@ -82,7 +82,7 @@
     </head>
     <body>
         <div class="container mt-4">
-            <h1 class="mb-4">Social Plab</h1>
+            <h1 class="mb-4">Social Plab v1.0.0</h1>
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="main mb-4" id="full-picture">
@@ -96,34 +96,31 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                        <button class="btn mb-2" id="instagram-creds" onclick="instagramSetup()"></button>
-
-                        <div class="form-group">
-                            <label for="bg">URL Fondo</label>
-                            <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label for="text">Texto</label>
-                            <input class="form-control" placeholder="Texto" id="text" value="Did you know that Kingdom Heart 3 is overrated?">
-                        </div>
-                        <div class="form-group">
-                            <label for="fontsize">Tamaño fuente</label>
-                            <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
-                        </div>
-                        <div class="form-group">
-                            <label for="text">Descripción de Instagram</label>
-                            <textarea class="form-control" placeholder="Descripción" id="description"></textarea>
-                        </div>
-            
-                        <button class="btn btn-primary" onclick="download(false)">Descargar</button>
-                        <button class="btn btn-outline-primary" onclick="download(true)">Subir a Instagram</button>
+                    <div class="form-group">
+                        <label for="bg">URL Fondo</label>
+                        <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label for="text">Texto</label>
+                        <input class="form-control" placeholder="Texto" id="text" value="Did you know that Kingdom Heart 3 is overrated?">
+                    </div>
+                    <div class="form-group">
+                        <label for="fontsize">Tamaño fuente</label>
+                        <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
+                    </div>
+                    <div class="form-group">
+                        <label for="text">Descripción de Instagram</label>
+                        <textarea class="form-control" placeholder="Descripción" id="description"></textarea>
+                    </div>
+        
+                    <button class="btn btn-primary" onclick="download(false)">Descargar</button>
+                    <button class="btn btn-outline-primary" onclick="download(true)">Subir a Instagram</button>
                 </div>
             </div>
         </div>
 
         <script>
-            const html2canvas = require("html2canvas")
-            var htmlToImage = require('html-to-image');
+            const htmlToImage = require('html-to-image');
 
             $(document).ready(()=>{
                 applyChanges();
@@ -141,36 +138,6 @@
                     $("#instagram-creds").removeClass("btn-sucess")
                     $("#instagram-creds").text("Instagram no configurado")
                 }
-            }
-
-            const instagramSetup = () => {
-
-                Swal.mixin({
-                    inputAttributes: {
-                        autocapitalize: 'off',
-                        autocorrect: 'off',
-                        required: "on"
-                    },
-                    showCancelButton: true,
-                    cancelButtonText: "Cancelar",
-                    confirmButtonText: "Continuar",
-                    progressSteps: ['1', '2']
-                }).queue([{
-                    title: 'Usuario de Instagram',
-                    input: 'text',
-                    inputPlaceholder: 'Ingresá el usuario',
-                }, {
-                    title: 'Password de Instagram',
-                    input: 'password',
-                    inputPlaceholder: 'Ingresá la password',
-                    confirmButtonText: "Finalizar"
-                }]).then(result => {
-                    console.log(result)
-                    if(result.value[0] && result.value[1]){
-                        localStorage.setItem("instagram", JSON.stringify({username: result.value[0], password: result.value[1]}));
-                    }
-                    checkInstagramCreds();
-                })
             }
 
             const applyChanges = () => {
@@ -199,20 +166,38 @@
             }
 
             const download = upload => {
+                if(upload){
+                    Swal.fire({
+                        title: "Ups!", 
+                        text: "Esta funcionalidad no está disponible todavía.",
+                        type:"warning",
+                        toast: true
+                    })
+                    return;
+                }
                 $("#full-picture").css("zoom","1");
                 htmlToImage.toPng(document.getElementById('full-picture'), {width: 1080, height: 1080}).then(dataUrl => {
                     $("#full-picture").css("zoom","");
                     if(upload){
-                        if(!localStorage.getItem("instagram")){
-                            Swal.fire("Error","No podés subir una imagen a Instagram hasta que no configures tus credenciales.","error")
-                        } else{
-                            ipcRenderer.send("upload", dataUrl, localStorage.getItem("instagram"));
-                        }
+                        ipcRenderer.send("upload", dataUrl);
                     } else {
                         ipcRenderer.send("download", dataUrl);
                     }
                 });
             }
+
+            ipcRenderer.on("download-done", (event, path) => {
+                if(path != "error"){
+                    Swal.fire({
+                        title: "Éxito",
+                        text: `Se guardó la imagen en el escritorio.\n(${path})`,
+                        type: "success",
+                        toast: true
+                    });
+                } else {
+                    Swal.fire("Error",`Ocurrió un error al intentar guardar la imagen.`,"error");
+                }
+            })
         </script>
     </body>
 </html>

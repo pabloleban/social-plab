@@ -1,10 +1,11 @@
 {
-  "name": "electron-quick-start",
+  "name": "social-plab",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Create easy images for Instagram",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-win": "electron-packager . \"social-plab\" --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Social Plab\" --out=\"dist\""
   },
   "repository": "https://github.com/pabloleban/social-plab",
   "keywords": [
@@ -14,22 +15,17 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
+  "author": "Pablo Leban",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^2.0.0"
+    "electron": "^2.0.0",
+    "electron-installer-windows": "^2.0.0"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
-    "electron-screenshot": "^1.0.5",
     "html-to-image": "^0.1.0",
-    "html2canvas": "^1.0.0-rc.3",
-    "ig-upload": "^1.0.2",
-    "image-screenshot": "^0.1.0",
-    "instagram-private-api": "^1.13.0",
     "jquery": "^3.3.1",
     "node-fetch": "^2.6.0",
-    "node-instagram": "^4.3.0",
     "popper.js": "^1.15.0",
     "sweetalert2": "^8.12.1"
   }

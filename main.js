@@ -1,5 +1,7 @@
 const electron = require('electron')
 const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const fetch = require("node-fetch");
 const {app, BrowserWindow, ipcMain} = electron;
 let mainWindow = null;
@@ -20,8 +22,14 @@ function createWindow () {
 
 ipcMain.on('download', (event, data) => {  
   data = data.replace(/^data:image\/png;base64,/, "");
-  fs.writeFile('instagram.png', data, 'base64', err => {
-    if (err) throw err;
+  const savePath = path.join(os.homedir(),'Desktop','instagram.png');
+  fs.writeFile(savePath, data, 'base64', err => {
+    if (err) {
+      event.sender.send('download-done', "error")
+      throw err;
+    } else {
+      event.sender.send('download-done', savePath)
+    }
   });
 });
 
@@ -50,6 +58,7 @@ ipcMain.on('upload', (event, imageData, creds, description) => {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       }
+   })
   })
 })
 
