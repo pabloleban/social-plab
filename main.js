@@ -1,14 +1,56 @@
 const electron = require('electron')
-const fs = require('fs');
+const fs = require('fs-plus');
 const os = require('os');
 const path = require('path');
 const fetch = require("node-fetch");
 const {app, BrowserWindow, ipcMain} = electron;
+
+if(require('electron-squirrel-startup')) app.quit();
+
+const handleStartupEvent = () => {
+  const installer = require("./installer-utils");
+  if (process.platform !== 'win32') {
+    return false;
+  }
+
+  var squirrelCommand = process.argv[1];
+  switch (squirrelCommand) {
+    case '--squirrel-install':
+      installer.createShortcuts(() => {
+        app.quit()
+      })
+
+      return true;
+    case '--squirrel-updated':
+      installer.updateShortcuts(() => {
+        app.quit()
+      })
+
+      return true;
+    case '--squirrel-uninstall':
+      installer.removeShortcuts(function () {
+        app.quit()
+      })
+
+      return true;
+    case '--squirrel-obsolete':
+      app.quit()
+      return true;
+  }
+};
+
+if (handleStartupEvent()) {
+  return;
+}
+
 let mainWindow = null;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({        
+    webPreferences: {
+      nodeIntegration: true
+    },
     frame: false,
   });
   //mainWindow.setMenu(null)

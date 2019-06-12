@@ -1,6 +1,6 @@
 {
   "name": "social-plab",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Create easy images for Instagram",
   "main": "main.js",
   "scripts": {
@@ -10,24 +10,25 @@
   },
   "repository": "https://github.com/pabloleban/social-plab",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "image",
+    "social",
+    "generator",
+    "instagram"
   ],
   "author": "Pablo Leban",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^2.0.0",
-    "electron-installer-windows": "^2.0.0"
+    "electron": "^5.0.3",
+    "electron-installer-windows": "^2.0.0",
+    "electron-packager": "^13.1.1"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
-    "electron-packager": "^13.1.1",
+    "electron-squirrel-startup": "^1.0.0",
     "electron-titlebar-windows": "^3.0.0",
+    "fs-plus": "^3.1.1",
     "html-to-image": "^0.1.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "jquery-ui-dist": "^1.12.1",
     "node-fetch": "^2.6.0",
     "popper.js": "^1.15.0",
