@@ -3,11 +3,11 @@
         <meta charset="UTF-8">
         <script>
             window.$ = window.jQuery = require('jquery');
+            require('jquery-ui-dist/jquery-ui')
             var {ipcRenderer, remote} = require('electron');
-            require("bootstrap")
+            require("bootstrap");
             const Swal = require('sweetalert2')
         </script>
-
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Lato:900" rel="stylesheet">
         <style>
@@ -33,10 +33,14 @@
                 display: flex;
                 justify-content: center;
                 zoom: 0.5;
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
             }
 
             .pic-blured{
-                filter: blur(10px) brightness(50%);
+                filter: blur(10px) brightness(25%);
                 height: 100%;
                 position: absolute;
             }
@@ -59,10 +63,10 @@
 
             .text{
                 width: 90%;
-                text-align: center;
+                text-align: left;
                 color: #ffffff;
                 height: 300px;
-                padding: 5% 10%;
+                padding: 2% 0% 5% 0%;
                 z-index: 100;
                 bottom: 0;
                 font-weight: 900;
@@ -70,14 +74,14 @@
                 align-items: center;
                 position: absolute;
                 word-break: break-word;
-                text-shadow: 3px 4px #000000;
+                /* text-shadow: 3px 4px #000000; */
                 font-family: 'Lato', sans-serif !important;
             }
 
             .logo{
                 position: absolute;
                 z-index: 100;
-                bottom: 695px;
+                padding: 24px;
             }
 
             .nice-border{
@@ -105,21 +109,27 @@
             ::-webkit-scrollbar-track {
                 display: none;
             }
+
+            .applogo {
+                width: 200px;
+            }
         </style>
     </head>
     <body>
         <div id="title-bar"></div>
         <div class="container-fluid pb-2 pt-3" style="overflow-y: scroll; height: calc(100% - 32px)">
             <div class="container">
-                <h1>Social Plab v1.0.1</h1>
+                <img src="assets/images/applogo.png" class="applogo py-4"><span class="pl-2">V1.0.1</span>
                 <div class="row justify-content-center">
                     <div class="col-lg-12 col-xl-6 justify-content-center d-flex">
                         <div class="main mb-4" id="full-picture">
                             <div class="text align-self-center"></div>
-                            <img src="logo.png" class="logo">
-                            <img src="marco.png" class="nice-border">
-                            <div class="mask d-flex justify-content-center">
-                                <img class="pic">
+                            <img src="assets/images/logo.png" class="logo">
+                            <img src="assets/images/marco.png" class="nice-border">
+                            <div class="mask">
+                                <span class="d-flex justify-content-center">
+                                    <img class="pic">
+                                </span>
                             </div>
                             <img class="pic-blured">
                         </div>
@@ -134,16 +144,24 @@
                             <input class="form-control" placeholder="Texto" id="text" value="Did you know that Kingdom Heart 3 is overrated?">
                         </div>
                         <div class="form-group">
-                            <label for="fontsize">Tamaño fuente</label>
+                            <label for="fontsize">Tamaño fuente - <span></span></label>
                             <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
                         </div>
                         <div class="form-group">
+                            <label for="imagesize">Tamaño de imagen - <span></span></label>
+                            <input type="range" min="0" max="100" value="0" class="custom-range" id="imagesize">
+                        </div>
+                        <!-- <div class="form-group">
                             <label for="text">Descripción de Instagram</label>
                             <textarea class="form-control" placeholder="Descripción" id="description"></textarea>
+                        </div> -->
+                        <div class="form-group">
+                            <label for="text">Nombre del archivo</label>
+                            <input class="form-control" placeholder="Nombre" id="filename" value="instagram">
                         </div>
             
                         <button class="btn btn-primary" onclick="download(false)">Descargar</button>
-                        <button class="btn btn-outline-primary" onclick="download(true)">Subir a Instagram</button>
+                        <button class="btn btn-primary" disabled onclick="download(true)">Subir a Instagram</button>
                     </div>
                 </div>
             </div>
@@ -157,8 +175,11 @@
 
             $(document).ready(()=>{
                 applyChanges();
+                loadImage();
                 checkInstagramCreds();
-                $("input").on("input", () => { applyChanges() })
+                $("input:not(#bg)").on("input", () => { applyChanges() })
+                $("#bg").on("input", () => { loadImage(); })
+                $(".pic").parent().draggable();
             });
 
             const checkInstagramCreds = () => {
@@ -173,50 +194,56 @@
                 }
             }
 
+            const loadImage = () => {
+                $(".pic, .pic-blured").attr("src", $("#bg").val().trim());
+                $(".pic").on("load", function() {
+                    const height = this.naturalHeight;
+                    const width = this.width;
+
+                    $(".pic").css({
+                        top: "90px",
+                        left: 0,
+                        right: 0,
+                        bottom: 0
+                    })
+
+                    if(height > width){
+                        $(".pic").width("1080px")
+                    } else {
+                        $(".pic").height("610px")
+                    }
+                })
+            }
+
             const applyChanges = () => {
                 const newText = $("#text").val().trim();
-                const newBg = $("#bg").val().trim();
                 const fontSize = $("#fontsize").val();
+                $("#fontsize").parent().find("label span").text(fontSize + "px");
+                const imageSize = 1 + Number($("#imagesize").val()) / 100;
+                $("#imagesize").parent().find("label span").text(100 + Number($("#imagesize").val())+"%");
                 if(newText!= ""){
                     $(".text").text(newText)
                 }
 
-                if(newBg != ""){
-                    $(".pic, .pic-blured").attr("src", newBg);
-                    $(".pic").on("load", function() {
-                        const height = this.naturalHeight;
-                        const width = this.width;
-
-                        if(height > width){
-                            $(".pic").width("1080px")
-                        } else {
-                            $(".pic").height("610px")
-                        }
-                    })
-                }
-
                 $(".text").css("font-size", fontSize+"px");
+                $(".pic").css("zoom", `${imageSize}`);
             }
 
             const download = upload => {
-                if(upload){
-                    Swal.fire({
-                        title: "Ups!", 
-                        text: "Esta funcionalidad no está disponible todavía.",
-                        type:"warning",
-                        toast: true
-                    })
-                    return;
-                }
-                $("#full-picture").css("zoom","1");
-                $("#full-picture").css("position","absolute");
+                $("#full-picture").css({
+                    "zoom":"1",
+                    "position":"fixed"
+                });
+                $("#full-picture").css("position","fixed");
                 htmlToImage.toPng(document.getElementById('full-picture'), {width: 1080, height: 1080}).then(dataUrl => {
-                    $("#full-picture").css("zoom","");
-                    $("#full-picture").css("position","relative");
+                    $("#full-picture").css({
+                        "zoom":"",
+                        "position":"relative"
+                    });
                     if(upload){
                         ipcRenderer.send("upload", dataUrl);
                     } else {
-                        ipcRenderer.send("download", dataUrl);
+                        ipcRenderer.send("download", {image: dataUrl, filename: $("#filename").val()});
                     }
                 });
             }

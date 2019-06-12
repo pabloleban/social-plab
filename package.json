@@ -1,6 +1,6 @@
 {
   "name": "social-plab",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create easy images for Instagram",
   "main": "main.js",
   "scripts": {
@@ -24,9 +24,11 @@
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
+    "electron-packager": "^13.1.1",
     "electron-titlebar-windows": "^3.0.0",
     "html-to-image": "^0.1.0",
     "jquery": "^3.3.1",
+    "jquery-ui-dist": "^1.12.1",
     "node-fetch": "^2.6.0",
     "popper.js": "^1.15.0",
     "sweetalert2": "^8.12.1"

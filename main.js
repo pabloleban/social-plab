@@ -10,9 +10,6 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     frame: false,
-    webPreferences: { 
-      webSecurity: false 
-    }
   });
   //mainWindow.setMenu(null)
   mainWindow.maximize();
@@ -26,9 +23,14 @@ function createWindow () {
 }
 
 ipcMain.on('download', (event, data) => {  
-  data = data.replace(/^data:image\/png;base64,/, "");
-  const savePath = path.join(os.homedir(),'Desktop','instagram.png');
-  fs.writeFile(savePath, data, 'base64', err => {
+  data.image = data.image.replace(/^data:image\/png;base64,/, "");
+
+  if(!data.filename.endsWith(".png")){
+    data.filename += ".png"
+  }
+
+  const savePath = path.join(os.homedir(), 'Desktop', data.filename);
+  fs.writeFile(savePath, data.image, 'base64', err => {
     if (err) {
       event.sender.send('download-done', "error")
       throw err;
