@@ -42,11 +42,11 @@ const spawnUpdate = (args, callback) => {
 }
 
 exports.createShortcuts = callback => {
-    spawnUpdate(['--createShortcut'], callback)
+    spawnUpdate(['--createShortcut', exeName], callback)
 }
 
 exports.removeShortcuts = callback => {
-    spawnUpdate(['--removeShortcut'], callback)
+    spawnUpdate(['--removeShortcut', exeName], callback)
 }
 
 
