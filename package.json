@@ -1,11 +1,11 @@
 {
   "name": "social-plab",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Create easy images for Instagram",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package-win": "electron-packager . \"social-plab\" --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=\"dist\" --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Social Plab\"",
+    "package-win": "electron-packager . \"social-plab\" --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=\"dist\" --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Social Plab\" --win32metadata.ProductName=\"Social Plab\"",
     "create-win-installer": "electron-installer-windows --src dist/social-plab-win32-ia32/ --dest dist/installers/"
   },
   "repository": "https://github.com/pabloleban/social-plab",
