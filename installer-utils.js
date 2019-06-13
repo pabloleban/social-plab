@@ -4,8 +4,9 @@ const child = require('child_process')
 const appFolder = path.resolve(process.execPath, '..')
 const rootFolder = path.resolve(appFolder, '..')
 const updateDotExe = path.join(rootFolder, 'Update.exe')
+const exeName = "Social Plab"
 
-const spawn = function (command, args, callback) {
+const spawn = (command, args, callback) => {
     let spawnedProcess = null
     let error = null
     let stdout = ''
@@ -13,21 +14,21 @@ const spawn = function (command, args, callback) {
     try {
         spawnedProcess = child.spawn(command, args)
     } catch (processError) {
-        process.nextTick(function () {
+        process.nextTick(() => {
         callback(processError, stdout)
         })
         return
     }
 
-    spawnedProcess.stdout.on('data', function (data) {
+    spawnedProcess.stdout.on('data', data => {
         stdout += data
     })
 
-    spawnedProcess.on('error', function (processError) {
+    spawnedProcess.on('error', processError => {
         error = error || processError
     })
 
-    spawnedProcess.on('close', function (code, signal) {
+    spawnedProcess.on('close', (code, signal) => {
         if (code !== 0) {
         error = error || new Error('Command failed: ' + (signal || code))
         }
@@ -36,25 +37,25 @@ const spawn = function (command, args, callback) {
     })
 }
   
-const spawnUpdate = function (args, callback) {
+const spawnUpdate = (args, callback) => {
     spawn(updateDotExe, args, callback)
 }
 
-exports.createShortcuts = function (callback) {
-    spawnUpdate(['--createShortcut', exeName], callback)
+exports.createShortcuts = callback => {
+    spawnUpdate(['--createShortcut'], callback)
 }
 
-exports.removeShortcuts = function (callback) {
-    spawnUpdate(['--removeShortcut', exeName], callback)
+exports.removeShortcuts = callback => {
+    spawnUpdate(['--removeShortcut'], callback)
 }
 
 
-exports.updateShortcuts = function (callback) {
+exports.updateShortcuts = callback => {
     const homeDirectory = fs.getHomeDirectory()
     if (homeDirectory) {
-      const desktopShortcutPath = path.join(homeDirectory, 'Desktop', "Social Plab.lnk")
-      fs.access(desktopShortcutPath, function (desktopShortcutExists) {
-        createShortcuts(function () {
+      const desktopShortcutPath = path.join(homeDirectory, 'Desktop', exeName+".lnk")
+      fs.access(desktopShortcutPath, desktopShortcutExists => {
+        createShortcuts(() => {
           if (desktopShortcutExists) {
             callback()
           } else {

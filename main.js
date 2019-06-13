@@ -28,7 +28,7 @@ const handleStartupEvent = () => {
 
       return true;
     case '--squirrel-uninstall':
-      installer.removeShortcuts(function () {
+      installer.removeShortcuts(() => {
         app.quit()
       })
 
@@ -45,7 +45,7 @@ if (handleStartupEvent()) {
 
 let mainWindow = null;
 
-function createWindow () {
+const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({        
     webPreferences: {
@@ -59,7 +59,7 @@ function createWindow () {
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
@@ -129,13 +129,13 @@ ipcMain.on('upload', (event, imageData, creds, description) => {
 
 app.on('ready', createWindow)
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
-app.on('activate', function () {
+app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
