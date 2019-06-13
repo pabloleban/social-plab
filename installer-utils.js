@@ -4,7 +4,7 @@ const child = require('child_process')
 const appFolder = path.resolve(process.execPath, '..')
 const rootFolder = path.resolve(appFolder, '..')
 const updateDotExe = path.join(rootFolder, 'Update.exe')
-const exeName = "Social Plab"
+const exeName = path.basename(process.execPath)
 
 const spawn = (command, args, callback) => {
     let spawnedProcess = null
@@ -53,7 +53,7 @@ exports.removeShortcuts = callback => {
 exports.updateShortcuts = callback => {
     const homeDirectory = fs.getHomeDirectory()
     if (homeDirectory) {
-      const desktopShortcutPath = path.join(homeDirectory, 'Desktop', exeName+".lnk")
+      const desktopShortcutPath = path.join(homeDirectory, 'Desktop', "Social Plab.lnk")
       fs.access(desktopShortcutPath, desktopShortcutExists => {
         createShortcuts(() => {
           if (desktopShortcutExists) {
