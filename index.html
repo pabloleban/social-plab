@@ -44,6 +44,7 @@
                 filter: blur(10px) brightness(25%);
                 height: 100%;
                 position: absolute;
+                transform: scale(1.02);
             }
 
             .pic {
@@ -63,16 +64,12 @@
             }
 
             .text{
-                width: 90%;
                 text-align: left;
                 color: #ffffff;
                 height: 300px;
-                padding: 2% 0% 5% 0%;
                 z-index: 100;
                 bottom: 0;
                 font-weight: 900;
-                display: flex;
-                align-items: center;
                 position: absolute;
                 word-break: break-word;
                 /* text-shadow: 3px 4px #000000; */
@@ -142,11 +139,25 @@
                         </div>
                         <div class="form-group">
                             <label for="text">Texto</label>
-                            <input class="form-control" placeholder="Texto" id="text" value="Did you know that Kingdom Heart 3 is overrated?">
+                            <input class="form-control" placeholder="Texto" id="text" value="Did you know that ##Kingdom Heart 3## is overrated?">
                         </div>
                         <div class="form-group">
                             <label for="fontsize">Tamaño fuente - <span></span></label>
                             <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">                        
+                                <div class="form-group">
+                                    <label for="padding-h">Padding horizontal - <span></span></label>
+                                    <input type="range" min="0" max="20" value="9" class="custom-range" id="padding-h">
+                                </div>
+                            </div>
+                            <div class="col-md-6">                        
+                                <div class="form-group">
+                                    <label for="padding-v">Padding vertical - <span></span></label>
+                                    <input type="range" min="0" max="20" value="7" class="custom-range" id="padding-v">
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="imagesize">Tamaño de imagen - <span></span></label>
@@ -160,7 +171,6 @@
                             <label for="text">Nombre del archivo</label>
                             <input class="form-control" placeholder="Nombre" id="filename" value="instagram">
                         </div>
-            
                         <button class="btn btn-primary" onclick="download(false)">Descargar</button>
                         <button class="btn btn-primary" disabled onclick="download(true)">Subir a Instagram</button>
                     </div>
@@ -183,6 +193,18 @@
                 $("#bg").on("input", () => { loadImage(); })
                 $(".pic").parent().draggable();
                 $("#version").text(`v${pkg.version}`)
+
+                $('#padding-h, #padding-v').on('mousedown', () => {
+                    $(".text").css({
+                        "background-image": "linear-gradient(to bottom, rgb(16, 0, 255) 0%, rgb(0, 0, 0) 100%), linear-gradient(to bottom, rgba(240, 40, 40, 1) 0%, rgba(240, 40, 40, 1) 100%)",
+                        "background-clip": "content-box, padding-box"
+                    });
+                }).on('mouseup mouseleave', () => {
+                    $(".text").css({
+                        "background-image": "",
+                        "background-clip": ""
+                    }) 
+                });
             });
 
             const checkInstagramCreds = () => {
@@ -219,16 +241,25 @@
             }
 
             const applyChanges = () => {
-                const newText = $("#text").val().trim();
-                const fontSize = $("#fontsize").val();
-                $("#fontsize").parent().find("label span").text(fontSize + "px");
+                const newText = $("#text").val().trim().replace(new RegExp(/##((.|\n)*?)##/, 'g'), `<span style='font-style: italic;'>$1</span>`);
+                const fontSize = $("#fontsize").val()+"px";
+                const padding = {
+                    vertical: `${$("#padding-v").val()}%`,
+                    horizontal: `${Number($("#padding-h").val())}%`
+                }
+                $("#fontsize").parent().find("label span").text(fontSize);
+                $("#padding-v").parent().find("label span").text(padding.vertical);
+                $("#padding-h").parent().find("label span").text(padding.horizontal);
                 const imageSize = 1 + Number($("#imagesize").val()) / 100;
                 $("#imagesize").parent().find("label span").text(100 + Number($("#imagesize").val())+"%");
                 if(newText!= ""){
-                    $(".text").text(newText)
+                    $(".text").html(newText)
                 }
 
-                $(".text").css("font-size", fontSize+"px");
+                $(".text").css({
+                    "font-size": fontSize,
+                    padding: `${padding.vertical} ${padding.horizontal}`
+                });
                 $(".pic").css("zoom", `${imageSize}`);
             }
 
