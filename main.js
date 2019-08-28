@@ -1,5 +1,6 @@
 const electron = require('electron')
 require('electron-reload')(__dirname);
+const {autoUpdater} = require('electron-updater');
 const fs = require('fs-plus');
 const os = require('os');
 const path = require('path');
@@ -140,4 +141,37 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+const sendStatusToWindow = text => {
+  log.info(text)
+  if(mainWindow){
+    mainWindow.webContents.send("message", text)
+  }
+}
+
+autoUpdater.on("checking-for-update", () => {
+  sendStatusToWindow("Checking for update...")
+})
+
+autoUpdater.on("update-available", info => {
+  sendStatusToWindow("Update available.")
+})
+
+autoUpdater.on("update-not-available", info => {
+  sendStatusToWindow("Update not available.")
+})
+
+autoUpdater.on("error", err => {
+  sendStatusToWindow(`Error in auto updater: ${err.toString()}`)
+})
+
+autoUpdater.on("download-progress", progressObj => {
+  sendStatusToWindow(`Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`)
+})
+
+autoUpdater.on("update-downloaded", info => {
+  sendStatusToWindow("Update downloaded; will install now")
+
+  autoUpdater.quitAndInstall();
 })
