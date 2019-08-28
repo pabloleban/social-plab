@@ -1,4 +1,5 @@
 const electron = require('electron')
+require('electron-reload')(__dirname);
 const fs = require('fs-plus');
 const os = require('os');
 const path = require('path');

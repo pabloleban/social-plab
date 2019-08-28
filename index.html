@@ -16,6 +16,10 @@
                 height: 30px !important;
             }
 
+            .clickable{
+                cursor: pointer;
+            }
+
             .titlebar{
                 background: rgba(0, 0, 0, 0.3);
             }
@@ -135,45 +139,71 @@
                         </div>
                     </div>
                     <div class="col-lg-12 col-xl-6">
-                        <!-- <div class="form-group">
-                            <button class="btn btn-primary" onclick="settings()">Configuración</button>
-                        </div> -->
-                        <div class="form-group">
-                            <label for="bg">URL Fondo</label>
-                            <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label for="text">Texto</label>
-                            <input class="form-control" placeholder="Texto" id="text" value="Did you know that ##Kingdom Heart 3## is overrated?">
-                        </div>
-                        <div class="form-group">
-                            <label for="fontsize">Tamaño fuente - <span></span></label>
-                            <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">                        
-                                <div class="form-group">
-                                    <label for="padding-h">Padding horizontal - <span></span></label>
-                                    <input type="range" min="4" max="20" value="9" class="custom-range" id="padding-h">
+                        <div id="accordion">
+                            <div class="card bg-dark text-white">
+                                <div class="card-header bg-primary clickable collapsed" id="main" data-toggle="collapse" data-target="#main-config" aria-expanded="false" aria-controls="main-config">
+                                    <h5 class="mb-0">
+                                        Main Configuration
+                                    </h5>
+                                </div>
+                                <div id="main-config" class="collapse" aria-labelledby="main" data-parent="#accordion">
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="fontsize">Brightness - <span></span></label>
+                                            <input type="range" min="0" max="100" value="15" class="custom-range" id="brightness">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fontsize">Blur - <span></span></label>
+                                            <input type="range" min="0" max="100" value="10" class="custom-range" id="blur">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">                        
-                                <div class="form-group">
-                                    <label for="padding-v">Padding vertical - <span></span></label>
-                                    <input type="range" min="0" max="14" value="7" class="custom-range" id="padding-v">
+                            <div class="card bg-dark text-white">
+                                <div class="card-header bg-primary clickable" id="temp" data-toggle="collapse" data-target="#temp-config" aria-expanded="true" aria-controls="temp-config">
+                                    <h5 class="mb-0">
+                                        Temporal Configuration
+                                    </h5>
+                                </div>
+                                <div id="temp-config" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                                    <div class="card-body">
+                                    
+                                        <div class="form-group">
+                                            <label for="bg">Background URL</label>
+                                            <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="text">Texto</label>
+                                            <input class="form-control" placeholder="Texto" id="text" value="Did you know that ##Kingdom Heart 3## is overrated?">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fontsize">Font size - <span></span></label>
+                                            <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">                        
+                                                <div class="form-group">
+                                                    <label for="padding-h">Horizontal Padding - <span></span></label>
+                                                    <input type="range" min="4" max="20" value="9" class="custom-range" id="padding-h">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">                        
+                                                <div class="form-group">
+                                                    <label for="padding-v">Vertical Padding - <span></span></label>
+                                                    <input type="range" min="0" max="14" value="7" class="custom-range" id="padding-v">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="imagesize">Image size - <span></span></label>
+                                            <input type="range" min="0" max="100" value="0" class="custom-range" id="imagesize">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="imagesize">Tamaño de imagen - <span></span></label>
-                            <input type="range" min="0" max="100" value="0" class="custom-range" id="imagesize">
-                        </div>
-                        <!-- <div class="form-group">
-                            <label for="text">Descripción de Instagram</label>
-                            <textarea class="form-control" placeholder="Descripción" id="description"></textarea>
-                        </div> -->
-                        <div class="form-group">
-                            <label for="text">Nombre del archivo</label>
+                            <label for="text">File name</label>
                             <input class="form-control" placeholder="Nombre" id="filename" value="instagram">
                         </div>
                         <button class="btn btn-primary" onclick="download(false)">Descargar</button>
@@ -190,11 +220,34 @@
             const titlebar = new ElectronTitlebarWindows({darkMode: true, draggable: true, fullscreen: true});
             titlebar.appendTo(document.getElementById("title-bar"));
 
+            const prefs = {}
+            const allPrefs = [
+                {name: "brightness", field: "#brightness", unit: "%"},
+                {name: "blur", field: "#blur", unit: "px"}
+            ]
+
+            const loadPrefs = () => {
+                allPrefs.forEach(p => {
+                    prefs[p.name] = localStorage.getItem(`pref-${p.name}`) || $(p.field).val()
+                    $(p.field).val(prefs[p.name]); 
+                })
+            }
+
+            const editPrefs = () => {
+                allPrefs.forEach(p => {
+                    localStorage.setItem(`pref-${p.name}`, $(p.field).val());
+                    prefs[p.name] = $(p.field).val();
+                    $(p.field).parent().find("label span").text(`${$(p.field).val()}${p.unit}`)
+                })
+            }
+
             $(document).ready(()=>{
+                loadPrefs();
                 applyChanges();
                 loadImage();
                 checkInstagramCreds();
-                $("input:not(#bg)").on("input", () => { applyChanges() })
+                $("#main-config input").on("input", () => { editPrefs(); applyChanges(); })
+                $("#temp-config input:not(#bg)").on("input", () => { applyChanges() })
                 $("#bg").on("input", () => { loadImage(); })
                 $(".pic").parent().draggable();
                 $("#version").text(`v${pkg.version}`)
@@ -211,14 +264,6 @@
                     }) 
                 });
             });
-
-            const settings = () => {
-                Swal.fire({
-                    title: "Configuración permanente",
-                    html: `Configurar.`,
-                    type: "success"
-                });
-            }
 
             const checkInstagramCreds = () => {
                 if(localStorage.getItem("instagram")){
@@ -274,6 +319,8 @@
                     padding: `${padding.vertical} ${padding.horizontal}`
                 });
                 $(".pic").css("zoom", `${imageSize}`);
+
+                $(".pic-blured").css("filter", `blur(${prefs.blur}px) brightness(${prefs.brightness}%)`)
             }
 
             const download = upload => {
