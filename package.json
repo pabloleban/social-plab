@@ -1,6 +1,6 @@
 {
   "name": "social-plab",
-  "version": "1.1.12",
+  "version": "1.2.0",
   "description": "Create easy images for Instagram",
   "main": "main.js",
   "build": {
