@@ -124,6 +124,7 @@
         <div class="container-fluid pb-2 pt-3" style="overflow-y: scroll; height: calc(100% - 32px)">
             <div class="container">
                 <img src="assets/images/applogo.png" class="applogo py-4"><span class="pl-2" id="version"></span>
+                <div class="card bg-success text-white p-2 mb-4 text-center" style="display: none;" id="status"></div>
                 <div class="row justify-content-center">
                     <div class="col-lg-12 col-xl-6 justify-content-center d-flex">
                         <div class="main mb-4" id="full-picture">
@@ -202,7 +203,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mt-4">
                             <label for="text">File name</label>
                             <input class="form-control" placeholder="Nombre" id="filename" value="instagram">
                         </div>
@@ -341,6 +342,49 @@
                     }
                 });
             }
+
+            const showStatus = (statusClass, text) => {
+                $("#status").removeClass("bg-warning bg-danger bg-success bg-primary").toggleClass(statusClass).html(text).show();
+            } 
+
+            const update = () => {
+                ipcRenderer.send("update")
+                $("#update-btn").hide();
+            }
+
+            ipcRenderer.on("checking-for-update", (ev, text) => {
+                showStatus("bg-primary", "Checking for updates...");
+            })
+
+            ipcRenderer.on("update-available", (ev, text) => {
+                showStatus("bg-warning", 
+                `<div class="row align-items-center">
+                    <div class="col-auto">
+                        An update is available!
+                    </div>
+                    <div class="col-auto my-1">
+                        <button id='update-btn' onclick='update();' class='btn btn-outline-light'>
+                            Update now
+                        </button>
+                    </div>
+                </div>`);
+            })
+
+            ipcRenderer.on("update-not-available", (ev, text) => {
+                showStatus("bg-success", "Social Plab is up to date!");
+            })
+
+            ipcRenderer.on("error", (ev, text) => {
+                showStatus("bg-danger", "Can't contact server :(");
+            })
+
+            ipcRenderer.on("download-progress", (ev, text) => {
+                showStatus("bg-primary", text)
+            })
+
+            ipcRenderer.on("update-downloaded", (ev, text) => {
+                showStatus("bg-primary", "Download complete!")
+            })
 
             ipcRenderer.on("download-done", (event, path) => {
                 if(path != "error"){

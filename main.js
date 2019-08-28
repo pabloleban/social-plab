@@ -64,6 +64,10 @@ const createWindow = () => {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  mainWindow.webContents.once('dom-ready', () => {
+    autoUpdater.checkForUpdates({autoDownload: false})
+  })
 }
 
 ipcMain.on('download', (event, data) => {  
@@ -127,6 +131,10 @@ ipcMain.on('upload', (event, imageData, creds, description) => {
       }
    })
   })
+
+  ipcMain.on("update", () => {
+    autoUpdater.downloadUpdate()
+  })
 })
 
 app.on('ready', createWindow)
@@ -143,35 +151,34 @@ app.on('activate', () => {
   }
 })
 
-const sendStatusToWindow = text => {
-  log.info(text)
+const sendStatusToWindow = (status, text = "") => {
   if(mainWindow){
-    mainWindow.webContents.send("message", text)
+    mainWindow.webContents.send(status, text)
   }
 }
 
 autoUpdater.on("checking-for-update", () => {
-  sendStatusToWindow("Checking for update...")
+  sendStatusToWindow("checking-for-update")
 })
 
 autoUpdater.on("update-available", info => {
-  sendStatusToWindow("Update available.")
+  sendStatusToWindow("update-available")
 })
 
 autoUpdater.on("update-not-available", info => {
-  sendStatusToWindow("Update not available.")
+  sendStatusToWindow("update-not-available")
 })
 
 autoUpdater.on("error", err => {
-  sendStatusToWindow(`Error in auto updater: ${err.toString()}`)
+  sendStatusToWindow("error")
 })
 
 autoUpdater.on("download-progress", progressObj => {
-  sendStatusToWindow(`Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`)
+  sendStatusToWindow("download-progress", `Downloaded ${progressObj.percent}% at ${progressObj.bytesPerSecond}`)
 })
 
 autoUpdater.on("update-downloaded", info => {
-  sendStatusToWindow("Update downloaded; will install now")
+  sendStatusToWindow("update-downloaded")
 
-  autoUpdater.quitAndInstall();
+  autoUpdater.quitAndInstall(true, true);
 })
