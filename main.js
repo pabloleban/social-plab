@@ -7,44 +7,6 @@ const path = require('path');
 const fetch = require("node-fetch");
 const {app, BrowserWindow, ipcMain} = electron;
 
-if(require('electron-squirrel-startup')) app.quit();
-
-const handleStartupEvent = () => {
-  const installer = require("./installer-utils");
-  if (process.platform !== 'win32') {
-    return false;
-  }
-
-  var squirrelCommand = process.argv[1];
-  switch (squirrelCommand) {
-    case '--squirrel-install':
-      installer.createShortcuts(() => {
-        app.quit()
-      })
-
-      return true;
-    case '--squirrel-updated':
-      installer.updateShortcuts(() => {
-        app.quit()
-      })
-
-      return true;
-    case '--squirrel-uninstall':
-      installer.removeShortcuts(() => {
-        app.quit()
-      })
-
-      return true;
-    case '--squirrel-obsolete':
-      app.quit()
-      return true;
-  }
-};
-
-if (handleStartupEvent()) {
-  return;
-}
-
 let mainWindow = null;
 
 const createWindow = () => {
@@ -66,7 +28,8 @@ const createWindow = () => {
   })
 
   mainWindow.webContents.once('dom-ready', () => {
-    autoUpdater.checkForUpdates({autoDownload: false})
+    autoUpdater.autoDownload = false;
+    autoUpdater.checkForUpdates()
   })
 }
 
@@ -173,7 +136,7 @@ autoUpdater.on("error", err => {
   sendStatusToWindow("error")
 })
 
-autoUpdater.on("download-progress", progressObj => {
+autoUpdater.on("download-progress", (evt, progressObj) => {
   sendStatusToWindow("download-progress", `Downloaded ${progressObj.percent}% at ${progressObj.bytesPerSecond}`)
 })
 

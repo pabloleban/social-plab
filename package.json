@@ -1,6 +1,6 @@
 {
   "name": "social-plab",
-  "version": "1.2.0",
+  "version": "1.2.6",
   "description": "Create easy images for Instagram",
   "main": "main.js",
   "build": {
@@ -13,9 +13,7 @@
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder --x64",
-    "gh-publish": "electron-builder --x64 -p=always",
-    "package-win": "electron-packager . \"social-plab\" --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=\"dist\" --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Social Plab\" --win32metadata.ProductName=\"Social Plab\"",
-    "create-win-installer": "electron-installer-windows --src dist/social-plab-win32-ia32/ --dest dist/installers/"
+    "gh-publish": "electron-builder --x64 -p=always"
   },
   "repository": "https://github.com/pabloleban/social-plab",
   "keywords": [
@@ -28,15 +26,12 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^5.0.3",
-    "electron-builder": "^21.2.0",
-    "electron-installer-windows": "^2.0.0",
-    "electron-packager": "^13.1.1"
+    "electron-builder": "^21.2.0"
   },
   "dependencies": {
     "electron-updater": "^4.1.2",
     "bootstrap": "^4.3.1",
     "electron-reload": "^1.5.0",
-    "electron-squirrel-startup": "^1.0.0",
     "electron-titlebar-windows": "^3.0.0",
     "fs-plus": "^3.1.1",
     "html-to-image": "^0.1.0",
