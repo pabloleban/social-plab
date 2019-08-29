@@ -1,6 +1,6 @@
 {
   "name": "social-plab",
-  "version": "1.2.6",
+  "version": "1.2.12",
   "description": "Create easy images for Instagram",
   "main": "main.js",
   "build": {
@@ -29,10 +29,10 @@
     "electron-builder": "^21.2.0"
   },
   "dependencies": {
-    "electron-updater": "^4.1.2",
     "bootstrap": "^4.3.1",
     "electron-reload": "^1.5.0",
     "electron-titlebar-windows": "^3.0.0",
+    "electron-updater": "^4.1.2",
     "fs-plus": "^3.1.1",
     "html-to-image": "^0.1.0",
     "jquery": "^3.4.1",

@@ -94,10 +94,10 @@ ipcMain.on('upload', (event, imageData, creds, description) => {
       }
    })
   })
+})
 
-  ipcMain.on("update", () => {
-    autoUpdater.downloadUpdate()
-  })
+ipcMain.on("update", () => {
+  autoUpdater.downloadUpdate()
 })
 
 app.on('ready', createWindow)

@@ -9,9 +9,13 @@
             const Swal = require('sweetalert2')
         </script>
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Lato:900" rel="stylesheet">
         <title>Social Plab</title>
         <style>
+            @font-face {
+                font-family: "Lato";
+                src: url("assets/fonts/Lato-black.ttf");
+            }
+
             svg {
                 height: 30px !important;
             }
@@ -174,7 +178,7 @@
                                             <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
                                         </div>
                                         <div class="form-group">
-                                            <label for="text">Texto</label>
+                                            <label for="text">Text</label>
                                             <input class="form-control" placeholder="Texto" id="text" value="Did you know that ##Kingdom Heart 3## is overrated?">
                                         </div>
                                         <div class="form-group">
@@ -205,10 +209,10 @@
                         </div>
                         <div class="form-group mt-4">
                             <label for="text">File name</label>
-                            <input class="form-control" placeholder="Nombre" id="filename" value="instagram">
+                            <input class="form-control" placeholder="Nombre" id="filename" value="quicksave-news.png">
                         </div>
-                        <button class="btn btn-primary" onclick="download(false)">Descargar</button>
-                        <button class="btn btn-primary" disabled onclick="download(true)">Subir a Instagram</button>
+                        <button class="btn btn-primary" onclick="download(false)">Download</button>
+                        <button class="btn btn-primary" disabled onclick="download(true)">Upload to Instagram</button>
                     </div>
                 </div>
             </div>
@@ -238,7 +242,6 @@
                 allPrefs.forEach(p => {
                     localStorage.setItem(`pref-${p.name}`, $(p.field).val());
                     prefs[p.name] = $(p.field).val();
-                    $(p.field).parent().find("label span").text(`${$(p.field).val()}${p.unit}`)
                 })
             }
 
@@ -321,7 +324,10 @@
                 });
                 $(".pic").css("zoom", `${imageSize}`);
 
-                $(".pic-blured").css("filter", `blur(${prefs.blur}px) brightness(${prefs.brightness}%)`)
+                $(".pic-blured").css("filter", `blur(${prefs.blur}${allPrefs.find(p => p.name == "blur").unit}) brightness(${prefs.brightness}${allPrefs.find(p => p.name == "brightness").unit})`)
+                allPrefs.forEach(p => {
+                    $(p.field).parent().find("label span").text(`${$(p.field).val()}${p.unit}`)
+                })
             }
 
             const download = upload => {
@@ -349,7 +355,7 @@
 
             const update = () => {
                 ipcRenderer.send("update")
-                $("#update-btn").hide();
+                showStatus("bg-primary", "Downloading update...");
             }
 
             ipcRenderer.on("checking-for-update", (ev, text) => {
@@ -375,7 +381,7 @@
             })
 
             ipcRenderer.on("error", (ev, text) => {
-                showStatus("bg-danger", "Can't contact server :(");
+                showStatus("bg-danger", "An error ocurred while checking updates :(");
             })
 
             ipcRenderer.on("download-progress", (ev, text) => {
@@ -389,13 +395,13 @@
             ipcRenderer.on("download-done", (event, path) => {
                 if(path != "error"){
                     Swal.fire({
-                        title: "Éxito",
-                        text: `Se guardó la imagen en el escritorio.\n(${path})`,
+                        title: "Success",
+                        text: `The image was saved in your Desktop.\n(${path})`,
                         type: "success",
                         toast: true
                     });
                 } else {
-                    Swal.fire("Error",`Ocurrió un error al intentar guardar la imagen.`,"error");
+                    Swal.fire("Error",`An error ocurred while saving the image.`,"error");
                 }
             })
 
