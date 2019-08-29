@@ -1,6 +1,6 @@
 {
   "name": "social-plab",
-  "version": "1.2.13",
+  "version": "1.2.15",
   "description": "Create easy images for Instagram",
   "main": "main.js",
   "build": {
@@ -13,7 +13,8 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Social Plab"
-    }
+    },
+    "extraResources": ["./assets/**"]
   },
   "scripts": {
     "start": "electron .",
