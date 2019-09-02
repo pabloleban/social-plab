@@ -9,13 +9,9 @@
             const Swal = require('sweetalert2')
         </script>
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="./node_modules/lato-font/css/lato-font.css" rel="stylesheet">
         <title>Social Plab</title>
         <style>
-            @font-face {
-                font-family: "Lato";
-                src: url("assets/fonts/Lato-black.ttf");
-            }
-
             svg {
                 height: 30px !important;
             }
@@ -81,7 +77,6 @@
                 font-weight: 900;
                 position: absolute;
                 word-break: break-word;
-                /* text-shadow: 3px 4px #000000; */
                 font-family: 'Lato', sans-serif !important;
             }
 
@@ -161,6 +156,10 @@
                                             <label for="fontsize">Blur - <span></span></label>
                                             <input type="range" min="0" max="100" value="10" class="custom-range" id="blur">
                                         </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="text-shadow" name="text-shadow">
+                                            <label class="custom-control-label" for="text-shadow">Text shadow</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -227,21 +226,35 @@
 
             const prefs = {}
             const allPrefs = [
-                {name: "brightness", field: "#brightness", unit: "%"},
-                {name: "blur", field: "#blur", unit: "px"}
+                {name: "brightness", field: "#brightness", unit: "%", isCheckbox: false},
+                {name: "blur", field: "#blur", unit: "px", isCheckbox: false},
+                {name: "textshadow", field: "#text-shadow", unit: "", isCheckbox: true}
             ]
+
+            const getPrefValue = pref => {
+                if(pref.isCheckbox){
+                    return $(pref.field).is(":checked").toString()
+                } else {
+                    return $(pref.field).val()
+                }
+            }
 
             const loadPrefs = () => {
                 allPrefs.forEach(p => {
-                    prefs[p.name] = localStorage.getItem(`pref-${p.name}`) || $(p.field).val()
-                    $(p.field).val(prefs[p.name]); 
+                    prefs[p.name] = localStorage.getItem(`pref-${p.name}`) || getPrefValue(p)
+                    if(p.isCheckbox){
+                        $(p.field).attr("checked", prefs[p.name] == "true")
+                    } else {
+                        $(p.field).val(prefs[p.name]); 
+                    }
                 })
             }
 
             const editPrefs = () => {
                 allPrefs.forEach(p => {
-                    localStorage.setItem(`pref-${p.name}`, $(p.field).val());
-                    prefs[p.name] = $(p.field).val();
+                    const newValue = getPrefValue(p);
+                    localStorage.setItem(`pref-${p.name}`, newValue);
+                    prefs[p.name] = newValue
                 })
             }
 
@@ -267,6 +280,7 @@
                         "background-clip": ""
                     }) 
                 });
+                whatsNew();
             });
 
             const checkInstagramCreds = () => {
@@ -320,7 +334,8 @@
 
                 $(".text").css({
                     "font-size": fontSize,
-                    padding: `${padding.vertical} ${padding.horizontal}`
+                    padding: `${padding.vertical} ${padding.horizontal}`,
+                    "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : ""
                 });
                 $(".pic").css("zoom", `${imageSize}`);
 
