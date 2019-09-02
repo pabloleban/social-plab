@@ -136,7 +136,7 @@ autoUpdater.on("error", err => {
   sendStatusToWindow("error")
 })
 
-autoUpdater.on("download-progress", (evt, progressObj) => {
+autoUpdater.on("download-progress", (progressObj) => {
   sendStatusToWindow("download-progress", `Downloaded ${progressObj.percent}% at ${progressObj.bytesPerSecond}`)
 })
 
