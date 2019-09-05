@@ -1,0 +1,239 @@
+<style>
+    .main{
+        position: relative;
+        width: 1080px;
+        height: 1080px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        zoom: 0.5;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .pic-blured{
+        filter: blur(10px) brightness(15%);
+        height: 100%;
+        position: absolute;
+        transform: scale(1.02);
+    }
+
+    .pic {
+        position: absolute;
+        top: 90px;
+        padding: 0px 50px;
+    }
+
+    .mask{
+        clip-path: inset(80px 50px 370px 50px);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        z-index: 10;
+        left: 0;
+    }
+
+    .text{
+        line-height: 1.3em;
+        text-align: left;
+        color: #ffffff;
+        height: 300px;
+        z-index: 100;
+        bottom: 0;
+        font-weight: 900;
+        position: absolute;
+        word-break: break-word;
+        font-family: 'Lato', sans-serif !important;
+    }
+
+    .logo{
+        position: absolute;
+        z-index: 100;
+        padding-top: 16px;
+        width: 350px;
+    }
+
+    .nice-border{
+        position: absolute;
+        z-index: 110;
+        height: 1035px;
+        width: 100%;
+        pointer-events: none;
+    }
+
+</style>
+
+<div class="col-lg-12 col-xl-6 justify-content-center d-flex">
+    <div class="main mb-4" id="full-picture">
+        <div class="text align-self-center"></div>
+        <img src="assets/images/logo.png" class="logo">
+        <img src="assets/images/marco.png" class="nice-border">
+        <div class="mask">
+            <span class="d-flex justify-content-center">
+                <img class="pic">
+            </span>
+        </div>
+        <img class="pic-blured">
+    </div>
+</div>
+<div class="col-lg-12 col-xl-6">
+    <div id="accordion">
+        <div class="card bg-dark text-white mb-4">
+            <div class="card-header bg-primary clickable collapsed" id="main" data-toggle="collapse" data-target="#main-config" aria-expanded="false" aria-controls="main-config">
+                <h5 class="mb-0">
+                    Main Configuration
+                </h5>
+            </div>
+            <div id="main-config" class="collapse" aria-labelledby="main" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="fontsize">Brightness - <span></span></label>
+                        <input type="range" min="0" max="100" value="15" class="custom-range" id="brightness">
+                    </div>
+                    <div class="form-group">
+                        <label for="fontsize">Blur - <span></span></label>
+                        <input type="range" min="0" max="100" value="10" class="custom-range" id="blur">
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="text-shadow" name="text-shadow">
+                        <label class="custom-control-label" for="text-shadow">Text shadow</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-dark text-white">
+            <div class="card-header bg-primary clickable" id="temp" data-toggle="collapse" data-target="#temp-config" aria-expanded="true" aria-controls="temp-config">
+                <h5 class="mb-0">
+                    Temporal Configuration
+                </h5>
+            </div>
+            <div id="temp-config" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                
+                    <div class="form-group">
+                        <label for="bg">Background URL</label>
+                        <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label for="text">Text</label>
+                        <input class="form-control" placeholder="Texto" id="text" value="Did you know that ##Kingdom Heart 3## is overrated?">
+                    </div>
+                    <div class="form-group">
+                        <label for="fontsize">Font size - <span></span></label>
+                        <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">                        
+                            <div class="form-group">
+                                <label for="padding-h">Horizontal Padding - <span></span></label>
+                                <input type="range" min="4" max="20" value="9" class="custom-range" id="padding-h">
+                            </div>
+                        </div>
+                        <div class="col-md-6">                        
+                            <div class="form-group">
+                                <label for="padding-v">Vertical Padding - <span></span></label>
+                                <input type="range" min="0" max="14" value="7" class="custom-range" id="padding-v">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="imagesize">Image size - <span></span></label>
+                        <input type="range" min="0" max="100" value="0" class="custom-range" id="imagesize">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mt-4">
+        <label for="text">File name</label>
+        <input class="form-control" placeholder="Nombre" id="filename" value="quicksave-news.png">
+    </div>
+    <button class="btn btn-primary" onclick="download($('#full-picture'))">Download</button>
+</div>
+
+<script>
+
+const loadImage = () => {
+    $(".pic, .pic-blured").attr("src", $("#bg").val().trim());
+    $(".pic").on("load", function() {
+        const height = this.naturalHeight;
+        const width = this.width;
+
+        $(".pic").css({
+            top: "90px",
+            left: 0,
+            right: 0,
+            bottom: 0
+        })
+
+        if(height > width){
+            $(".pic").width("1080px")
+        } else {
+            $(".pic").height("610px")
+        }
+    })
+}
+
+const editPrefs = () => {
+    allPrefs.forEach(p => {
+        const newValue = getPrefValue(p);
+        localStorage.setItem(`pref-${p.name}`, newValue);
+        prefs[p.name] = newValue
+    })
+}
+
+const applyChanges = () => {
+    const newText = $("#text").val().trim().replace(new RegExp(/##((.|\n)*?)##/, 'g'), `<span style='font-style: italic;'>$1</span>`);
+    const fontSize = $("#fontsize").val()+"px";
+    const padding = {
+        vertical: `${$("#padding-v").val()}%`,
+        horizontal: `${Number($("#padding-h").val())}%`
+    }
+    $("#fontsize").parent().find("label span").text(fontSize);
+    $("#padding-v").parent().find("label span").text(padding.vertical);
+    $("#padding-h").parent().find("label span").text(padding.horizontal);
+    const imageSize = 1 + Number($("#imagesize").val()) / 100;
+    $("#imagesize").parent().find("label span").text(100 + Number($("#imagesize").val())+"%");
+    if(newText!= ""){
+        $(".text").html(newText)
+    }
+
+    $(".text").css({
+        "font-size": fontSize,
+        padding: `${padding.vertical} ${padding.horizontal}`,
+        "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : ""
+    });
+    $(".pic").css("zoom", `${imageSize}`);
+
+    $(".pic-blured").css("filter", `blur(${prefs.blur}${allPrefs.find(p => p.name == "blur").unit}) brightness(${prefs.brightness}${allPrefs.find(p => p.name == "brightness").unit})`)
+    allPrefs.forEach(p => {
+        $(p.field).parent().find("label span").text(`${$(p.field).val()}${p.unit}`)
+    })
+}
+
+$(() => {
+    applyChanges();
+    loadImage();
+    $("#main-config input").on("input", () => { editPrefs(); applyChanges(); })
+    $("#temp-config input:not(#bg)").on("input", () => { applyChanges() })
+    $("#bg").on("input", () => { loadImage(); })
+    $(".pic").parent().draggable();
+    $("#version").text(`v${pkg.version}`)
+
+    $('#padding-h, #padding-v').on('mousedown', () => {
+        $(".text").css({
+            "background-image": "linear-gradient(to bottom, rgb(16, 0, 255) 0%, rgb(0, 0, 0) 100%), linear-gradient(to bottom, rgba(240, 40, 40, 1) 0%, rgba(240, 40, 40, 1) 100%)",
+            "background-clip": "content-box, padding-box"
+        });
+    }).on('mouseup mouseleave', () => {
+        $(".text").css({
+            "background-image": "",
+            "background-clip": ""
+        }) 
+    });
+})
+
+</script>

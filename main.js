@@ -67,35 +67,6 @@ ipcMain.on("minimize", () => {
   mainWindow.minimize();
 })
 
-ipcMain.on('upload', (event, imageData, creds, description) => {  
-  imageData = imageData.replace(/^data:image\/png;base64,/, "");
-
-  fetch("https://api.imgur.com/3/image", {
-    method: "POST", 
-    body: JSON.stringify({
-      image: imageData,
-      type: "base64",
-      name: "test.png",
-      title: "what a test"
-    }), 
-    headers: {
-      'Authorization': "Client-ID b00002d9b65af3b",
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  }).then(result => result.json()).then(json => {
-    const link = json.data.link;
-    fetch(`graph.facebook.com/17841400008460056/media?image_url=${link}&caption=${description}`, {
-      method: "POST", 
-      headers: {
-        'Authorization': "Client-ID b00002d9b65af3b",
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-   })
-  })
-})
-
 ipcMain.on("update", () => {
   autoUpdater.downloadUpdate()
 })
