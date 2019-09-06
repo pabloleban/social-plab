@@ -17,18 +17,57 @@
     .mode-monthly .nice-border{
         position: absolute;
         z-index: 110;
-        height: 1035px;
         width: 100%;
         pointer-events: none;
     }
     
-    .mode-monthly .mask{
+    .mode-monthly .mask1{
         clip-path: polygon(0 0, 0% 100%, 100% 0);
         position: absolute;
-        height: 660px;
+        width: 670px;
+        height: 680px;
         top: 0;
         z-index: 10;
         left: 0;
+    }
+
+    .mode-monthly .mask3{
+        clip-path: polygon(100% 0, 0 100%, 100% 100%);
+        position: absolute;
+        width: 690px;
+        height: 700px;
+        bottom: 0;
+        right: 0;
+        z-index: 10;
+    }
+
+    .mode-monthly .cover-text{
+        line-height: 1.3em;
+        text-align: left;
+        color: #ffffff;
+        height: 148px;
+        top: 387px;
+        font-size: 60px;
+        width: 570px;
+        z-index: 116;
+        font-weight: 900;
+        position: absolute;
+        word-break: break-word;
+    }
+
+    .mode-monthly .cover-sub-text{
+        line-height: 1.3em;
+        text-align: left;
+        color: #ffffff;
+        height: 80px;
+        top: 610px;
+        right: 255px;
+        font-size: 60px;
+        width: 149px;
+        z-index: 116;
+        font-weight: 900;
+        position: absolute;
+        word-break: break-word;
     }
 
 </style>
@@ -37,11 +76,23 @@
     <div class="main mb-4" id="full-picture">
         <div class="text align-self-center"></div>
         <img src="assets/images/monthly.png" class="nice-border">
-        <div class="mask">
+        <div class="mask1">
             <span class="">
-                <img class="pic" style="width: 670px;" src="https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-903ea3cb.jpg">
+                <img class="pic" id="bg-1">
             </span>
         </div>
+        <div class="mask2">
+            <span class="">
+                <img class="pic" id="bg-2">
+            </span>
+        </div>
+        <div class="mask3">
+            <span class="">
+                <img class="pic" id="bg-3">
+            </span>
+        </div>
+        <div class="cover-text"></div>
+        <div class="cover-sub-text"></div>
     </div>
 </div>
 <div class="col-lg-12 col-xl-6">
@@ -49,7 +100,7 @@
         <div class="card bg-dark text-white">
             <div class="card-header bg-primary clickable" id="temp" data-toggle="collapse" data-target="#temp-config" aria-expanded="true" aria-controls="temp-config">
                 <h5 class="mb-0">
-                    Temporal Configuration
+                    Cover Configuration
                 </h5>
             </div>
             <div id="temp-config" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
@@ -57,11 +108,11 @@
                 
                     <div class="form-group">
                         <label for="bg">Cover Main Text</label>
-                        <input class="form-control" placeholder="Cover Main Text" id="cover-main-text" value="LO MÁS ESPERADO DE SEPTIEMBRE">
+                        <input class="form-control" placeholder="Cover Main Text" id="cover-main-text" value="">
                     </div>
                     <div class="form-group">
                         <label for="text">Cover Sub Text</label>
-                        <input class="form-control" placeholder="Cover Sub Text" id="cover-sub-text" value="2019">
+                        <input class="form-control" placeholder="Cover Sub Text" id="cover-sub-text" value="">
                     </div>
                     <div class="form-group">
                         <label for="fontsize">Cover Background Image 1</label>
@@ -85,3 +136,51 @@
     </div>
     <button class="btn btn-primary" onclick="download()">Download</button>
 </div>
+
+<script>
+
+const monthly = $("#mode-monthly")
+
+$(() => {
+    const applyChanges = () => {
+        monthly.find(".cover-text").text(monthly.find("#cover-main-text").val());
+        monthly.find(".cover-sub-text").text(monthly.find("#cover-sub-text").val());
+    }
+
+    const loadImage = (imgId, inputId) => {
+        monthly.find(imgId).attr("src", $(inputId).val().trim());
+        monthly.find(imgId).unbind("load")
+        monthly.find(imgId).on("load", function(){
+            const height = this.naturalHeight;
+            const width = this.width;
+
+            // normal.find(".pic").css({
+            //     top: "90px",
+            //     left: 0,
+            //     right: 0,
+            //     bottom: 0
+            // })
+
+            if(height > width){
+                monthly.find(imgId).width("100%")
+            } else {
+                monthly.find(imgId).height("100%")
+            }
+        })
+    }
+
+    monthly.find("#cover-sub-text").val(new Date().getFullYear());
+    monthly.find("#cover-main-text").val(`LO MÁS ESPERADO DE ${new Date().toLocaleString("es-es", {month: "long"}).toUpperCase()}`);
+
+    loadImage("#bg-1", "#cover-bg-1");
+    loadImage("#bg-2", "#cover-bg-2");
+    loadImage("#bg-3", "#cover-bg-3");
+
+    normal.find("#bg-1, #bg-2, #bg-3").on("input", () => {
+        loadImage()
+    })
+
+    applyChanges();
+})
+
+</script>
