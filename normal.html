@@ -1,5 +1,5 @@
 <style>
-    .main{
+    .mode-normal .main{
         position: relative;
         width: 1080px;
         height: 1080px;
@@ -13,20 +13,20 @@
         bottom: 0;
     }
 
-    .pic-blured{
+    .mode-normal .pic-blured{
         filter: blur(10px) brightness(15%);
         height: 100%;
         position: absolute;
         transform: scale(1.02);
     }
 
-    .pic {
+    .mode-normal .pic {
         position: absolute;
         top: 90px;
         padding: 0px 50px;
     }
 
-    .mask{
+    .mode-normal .mask{
         clip-path: inset(80px 50px 370px 50px);
         width: 100%;
         height: 100%;
@@ -36,7 +36,7 @@
         left: 0;
     }
 
-    .text{
+    .mode-normal .text{
         line-height: 1.3em;
         text-align: left;
         color: #ffffff;
@@ -49,14 +49,14 @@
         font-family: 'Lato', sans-serif !important;
     }
 
-    .logo{
+    .mode-normal .logo{
         position: absolute;
         z-index: 100;
         padding-top: 16px;
         width: 350px;
     }
 
-    .nice-border{
+    .mode-normal .nice-border{
         position: absolute;
         z-index: 110;
         height: 1035px;
@@ -65,7 +65,6 @@
     }
 
 </style>
-
 <div class="col-lg-12 col-xl-6 justify-content-center d-flex">
     <div class="main mb-4" id="full-picture">
         <div class="text align-self-center"></div>
@@ -151,18 +150,19 @@
         <label for="text">File name</label>
         <input class="form-control" placeholder="Nombre" id="filename" value="quicksave-news.png">
     </div>
-    <button class="btn btn-primary" onclick="download($('#full-picture'))">Download</button>
+    <button class="btn btn-primary" onclick="download(normal.find('#full-picture'))">Download</button>
 </div>
-
 <script>
 
+const normal = $("#mode-normal")
+
 const loadImage = () => {
-    $(".pic, .pic-blured").attr("src", $("#bg").val().trim());
-    $(".pic").on("load", function() {
+    normal.find(".pic, .pic-blured").attr("src", normal.find("#bg").val().trim());
+    normal.find(".pic").on("load", function() {
         const height = this.naturalHeight;
         const width = this.width;
 
-        $(".pic").css({
+        normal.find(".pic").css({
             top: "90px",
             left: 0,
             right: 0,
@@ -170,9 +170,9 @@ const loadImage = () => {
         })
 
         if(height > width){
-            $(".pic").width("1080px")
+            normal.find(".pic").width("1080px")
         } else {
-            $(".pic").height("610px")
+            normal.find(".pic").height("610px")
         }
     })
 }
@@ -186,50 +186,50 @@ const editPrefs = () => {
 }
 
 const applyChanges = () => {
-    const newText = $("#text").val().trim().replace(new RegExp(/##((.|\n)*?)##/, 'g'), `<span style='font-style: italic;'>$1</span>`);
-    const fontSize = $("#fontsize").val()+"px";
+    const newText = normal.find("#text").val().trim().replace(new RegExp(/##((.|\n)*?)##/, 'g'), `<span style='font-style: italic;'>$1</span>`);
+    const fontSize = normal.find("#fontsize").val()+"px";
     const padding = {
-        vertical: `${$("#padding-v").val()}%`,
-        horizontal: `${Number($("#padding-h").val())}%`
+        vertical: `${normal.find("#padding-v").val()}%`,
+        horizontal: `${Number(normal.find("#padding-h").val())}%`
     }
-    $("#fontsize").parent().find("label span").text(fontSize);
-    $("#padding-v").parent().find("label span").text(padding.vertical);
-    $("#padding-h").parent().find("label span").text(padding.horizontal);
-    const imageSize = 1 + Number($("#imagesize").val()) / 100;
-    $("#imagesize").parent().find("label span").text(100 + Number($("#imagesize").val())+"%");
+    normal.find("#fontsize").parent().find("label span").text(fontSize);
+    normal.find("#padding-v").parent().find("label span").text(padding.vertical);
+    normal.find("#padding-h").parent().find("label span").text(padding.horizontal);
+    const imageSize = 1 + Number(normal.find("#imagesize").val()) / 100;
+    normal.find("#imagesize").parent().find("label span").text(100 + Number(normal.find("#imagesize").val())+"%");
     if(newText!= ""){
-        $(".text").html(newText)
+        normal.find(".text").html(newText)
     }
 
-    $(".text").css({
+    normal.find(".text").css({
         "font-size": fontSize,
         padding: `${padding.vertical} ${padding.horizontal}`,
         "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : ""
     });
-    $(".pic").css("zoom", `${imageSize}`);
+    normal.find(".pic").css("zoom", `${imageSize}`);
 
-    $(".pic-blured").css("filter", `blur(${prefs.blur}${allPrefs.find(p => p.name == "blur").unit}) brightness(${prefs.brightness}${allPrefs.find(p => p.name == "brightness").unit})`)
+    normal.find(".pic-blured").css("filter", `blur(${prefs.blur}${allPrefs.find(p => p.name == "blur").unit}) brightness(${prefs.brightness}${allPrefs.find(p => p.name == "brightness").unit})`)
     allPrefs.forEach(p => {
-        $(p.field).parent().find("label span").text(`${$(p.field).val()}${p.unit}`)
+        normal.find(p.field).parent().find("label span").text(`${normal.find(p.field).val()}${p.unit}`)
     })
 }
 
 $(() => {
     applyChanges();
     loadImage();
-    $("#main-config input").on("input", () => { editPrefs(); applyChanges(); })
-    $("#temp-config input:not(#bg)").on("input", () => { applyChanges() })
-    $("#bg").on("input", () => { loadImage(); })
-    $(".pic").parent().draggable();
-    $("#version").text(`v${pkg.version}`)
+    normal.find("#main-config input").on("input", () => { editPrefs(); applyChanges(); })
+    normal.find("#temp-config input:not(#bg)").on("input", () => { applyChanges() })
+    normal.find("#bg").on("input", () => { loadImage(); })
+    normal.find(".pic").parent().draggable();
+    normal.find("#version").text(`v${pkg.version}`)
 
-    $('#padding-h, #padding-v').on('mousedown', () => {
-        $(".text").css({
+    normal.find('#padding-h, #padding-v').on('mousedown', () => {
+        normal.find(".text").css({
             "background-image": "linear-gradient(to bottom, rgb(16, 0, 255) 0%, rgb(0, 0, 0) 100%), linear-gradient(to bottom, rgba(240, 40, 40, 1) 0%, rgba(240, 40, 40, 1) 100%)",
             "background-clip": "content-box, padding-box"
         });
     }).on('mouseup mouseleave', () => {
-        $(".text").css({
+        normal.find(".text").css({
             "background-image": "",
             "background-clip": ""
         }) 

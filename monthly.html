@@ -1,40 +1,51 @@
+<style>
+
+    .mode-monthly .main{
+        position: relative;
+        width: 1080px;
+        height: 1080px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        zoom: 0.5;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .mode-monthly .nice-border{
+        position: absolute;
+        z-index: 110;
+        height: 1035px;
+        width: 100%;
+        pointer-events: none;
+    }
+    
+    .mode-monthly .mask{
+        clip-path: polygon(0 0, 0% 100%, 100% 0);
+        position: absolute;
+        height: 660px;
+        top: 0;
+        z-index: 10;
+        left: 0;
+    }
+
+</style>
+
 <div class="col-lg-12 col-xl-6 justify-content-center d-flex">
     <div class="main mb-4" id="full-picture">
         <div class="text align-self-center"></div>
         <img src="assets/images/monthly.png" class="nice-border">
         <div class="mask">
-            <span class="d-flex justify-content-center">
-                <img class="pic">
+            <span class="">
+                <img class="pic" style="width: 670px;" src="https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-903ea3cb.jpg">
             </span>
         </div>
-        <img class="pic-blured">
     </div>
 </div>
 <div class="col-lg-12 col-xl-6">
     <div id="accordion">
-        <div class="card bg-dark text-white mb-4">
-            <div class="card-header bg-primary clickable collapsed" id="main" data-toggle="collapse" data-target="#main-config" aria-expanded="false" aria-controls="main-config">
-                <h5 class="mb-0">
-                    Main Configuration
-                </h5>
-            </div>
-            <div id="main-config" class="collapse" aria-labelledby="main" data-parent="#accordion">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label for="fontsize">Brightness - <span></span></label>
-                        <input type="range" min="0" max="100" value="15" class="custom-range" id="brightness">
-                    </div>
-                    <div class="form-group">
-                        <label for="fontsize">Blur - <span></span></label>
-                        <input type="range" min="0" max="100" value="10" class="custom-range" id="blur">
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="text-shadow" name="text-shadow">
-                        <label class="custom-control-label" for="text-shadow">Text shadow</label>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="card bg-dark text-white">
             <div class="card-header bg-primary clickable" id="temp" data-toggle="collapse" data-target="#temp-config" aria-expanded="true" aria-controls="temp-config">
                 <h5 class="mb-0">
@@ -45,34 +56,24 @@
                 <div class="card-body">
                 
                     <div class="form-group">
-                        <label for="bg">Background URL</label>
-                        <input class="form-control" placeholder="URL Fondo" id="bg" value="https://e00-marca.uecdn.es/assets/multimedia/imagenes/2018/06/10/15286399998023.jpg">
+                        <label for="bg">Cover Main Text</label>
+                        <input class="form-control" placeholder="Cover Main Text" id="cover-main-text" value="LO MÁS ESPERADO DE SEPTIEMBRE">
                     </div>
                     <div class="form-group">
-                        <label for="text">Text</label>
-                        <input class="form-control" placeholder="Texto" id="text" value="Did you know that ##Kingdom Heart 3## is overrated?">
+                        <label for="text">Cover Sub Text</label>
+                        <input class="form-control" placeholder="Cover Sub Text" id="cover-sub-text" value="2019">
                     </div>
                     <div class="form-group">
-                        <label for="fontsize">Font size - <span></span></label>
-                        <input type="range" min="30" max="70" value="50" class="custom-range" id="fontsize">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">                        
-                            <div class="form-group">
-                                <label for="padding-h">Horizontal Padding - <span></span></label>
-                                <input type="range" min="4" max="20" value="9" class="custom-range" id="padding-h">
-                            </div>
-                        </div>
-                        <div class="col-md-6">                        
-                            <div class="form-group">
-                                <label for="padding-v">Vertical Padding - <span></span></label>
-                                <input type="range" min="0" max="14" value="7" class="custom-range" id="padding-v">
-                            </div>
-                        </div>
+                        <label for="fontsize">Cover Background Image 1</label>
+                        <input class="form-control" placeholder="Cover Background Image 1" id="cover-bg-1" value="https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-903ea3cb.jpg">
                     </div>
                     <div class="form-group">
-                        <label for="imagesize">Image size - <span></span></label>
-                        <input type="range" min="0" max="100" value="0" class="custom-range" id="imagesize">
+                        <label for="fontsize">Cover Background Image 2</label>
+                        <input class="form-control" placeholder="Cover Background Image 2" id="cover-bg-2" value="https://ak6.picdn.net/shutterstock/videos/1027713866/thumb/10.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label for="fontsize">Cover Background Image 3</label>
+                        <input class="form-control" placeholder="Cover Background Image 3" id="cover-bg-3" value="https://d3ansictanv2wj.cloudfront.net/bot-day-background-700x600-ce7fb2df41cfbf6c827cf229da02882a.jpg">
                     </div>
                 </div>
             </div>

@@ -65,7 +65,7 @@
                         <input type="radio" name="mode" value="monthly" autocomplete="off">Monthly
                     </label>
                 </div>
-                <div class="row justify-content-center" id="content"></div>
+                <div class="justify-content-center" id="content"></div>
             </div>
         </div>
 
@@ -108,14 +108,15 @@
                 $("input[name='mode']").change(() => {
                     const mode = $("input[name='mode']:checked").val();
                     
+                    $("#content > div").hide();
+
                     if(loaded.includes(mode)){
                         //show
                         $(`#mode-${mode}`).show()
                     } else {
                         //not loaded, so load
                         loaded.push(mode)
-                        $("#content > div").hide();
-                        $('#content').append(`<div class="row" id='mode-${mode}'></div>`)
+                        $('#content').append(`<div class="row mode-${mode}" id='mode-${mode}'></div>`)
                         switch(mode){
                             case "normal":
                                 $(`#mode-${mode}`).load('normal.html')
