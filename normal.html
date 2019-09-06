@@ -156,9 +156,46 @@
 
 const normal = $("#mode-normal")
 
-const loadImage = () => {
-    normal.find(".pic, .pic-blured").attr("src", normal.find("#bg").val().trim());
-    normal.find(".pic").on("load", function() {
+const editPrefs = () => {
+    allPrefs.forEach(p => {
+        const newValue = getPrefValue(p);
+        localStorage.setItem(`pref-${p.name}`, newValue);
+        prefs[p.name] = newValue
+    })
+}
+
+$(() => {
+    const applyChanges = () => {
+        const newText = normal.find("#text").val().trim().replace(new RegExp(/##((.|\n)*?)##/, 'g'), `<span style='font-style: italic;'>$1</span>`);
+        const fontSize = normal.find("#fontsize").val()+"px";
+        const padding = {
+            vertical: `${normal.find("#padding-v").val()}%`,
+            horizontal: `${Number(normal.find("#padding-h").val())}%`
+        }
+        normal.find("#fontsize").parent().find("label span").text(fontSize);
+        normal.find("#padding-v").parent().find("label span").text(padding.vertical);
+        normal.find("#padding-h").parent().find("label span").text(padding.horizontal);
+        const imageSize = 1 + Number(normal.find("#imagesize").val()) / 100;
+        normal.find("#imagesize").parent().find("label span").text(100 + Number(normal.find("#imagesize").val())+"%");
+        if(newText!= ""){
+            normal.find(".text").html(newText)
+        }
+
+        normal.find(".text").css({
+            "font-size": fontSize,
+            padding: `${padding.vertical} ${padding.horizontal}`,
+            "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : ""
+        });
+        normal.find(".pic").css("zoom", `${imageSize}`);
+
+        normal.find(".pic-blured").css("filter", `blur(${prefs.blur}${allPrefs.find(p => p.name == "blur").unit}) brightness(${prefs.brightness}${allPrefs.find(p => p.name == "brightness").unit})`)
+        allPrefs.forEach(p => {
+            normal.find(p.field).parent().find("label span").text(`${normal.find(p.field).val()}${p.unit}`)
+        })
+    }
+
+    applyChanges();
+    normal.find(".pic").on("load", function(){
         const height = this.naturalHeight;
         const width = this.width;
 
@@ -175,51 +212,12 @@ const loadImage = () => {
             normal.find(".pic").height("610px")
         }
     })
-}
-
-const editPrefs = () => {
-    allPrefs.forEach(p => {
-        const newValue = getPrefValue(p);
-        localStorage.setItem(`pref-${p.name}`, newValue);
-        prefs[p.name] = newValue
-    })
-}
-
-const applyChanges = () => {
-    const newText = normal.find("#text").val().trim().replace(new RegExp(/##((.|\n)*?)##/, 'g'), `<span style='font-style: italic;'>$1</span>`);
-    const fontSize = normal.find("#fontsize").val()+"px";
-    const padding = {
-        vertical: `${normal.find("#padding-v").val()}%`,
-        horizontal: `${Number(normal.find("#padding-h").val())}%`
-    }
-    normal.find("#fontsize").parent().find("label span").text(fontSize);
-    normal.find("#padding-v").parent().find("label span").text(padding.vertical);
-    normal.find("#padding-h").parent().find("label span").text(padding.horizontal);
-    const imageSize = 1 + Number(normal.find("#imagesize").val()) / 100;
-    normal.find("#imagesize").parent().find("label span").text(100 + Number(normal.find("#imagesize").val())+"%");
-    if(newText!= ""){
-        normal.find(".text").html(newText)
-    }
-
-    normal.find(".text").css({
-        "font-size": fontSize,
-        padding: `${padding.vertical} ${padding.horizontal}`,
-        "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : ""
-    });
-    normal.find(".pic").css("zoom", `${imageSize}`);
-
-    normal.find(".pic-blured").css("filter", `blur(${prefs.blur}${allPrefs.find(p => p.name == "blur").unit}) brightness(${prefs.brightness}${allPrefs.find(p => p.name == "brightness").unit})`)
-    allPrefs.forEach(p => {
-        normal.find(p.field).parent().find("label span").text(`${normal.find(p.field).val()}${p.unit}`)
-    })
-}
-
-$(() => {
-    applyChanges();
-    loadImage();
     normal.find("#main-config input").on("input", () => { editPrefs(); applyChanges(); })
     normal.find("#temp-config input:not(#bg)").on("input", () => { applyChanges() })
-    normal.find("#bg").on("input", () => { loadImage(); })
+    normal.find("#bg").on("input", () => {
+        normal.find(".pic, .pic-blured").attr("src", normal.find("#bg").val().trim());
+    })
+    normal.find("#bg").trigger("input")
     normal.find(".pic").parent().draggable();
     normal.find("#version").text(`v${pkg.version}`)
 
