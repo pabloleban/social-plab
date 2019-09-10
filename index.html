@@ -9,10 +9,11 @@
             const Swal = require('sweetalert2')
         </script>
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="./node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
         <link href="./node_modules/lato-font/css/lato-font.css" rel="stylesheet">
         <title>Social Plab</title>
         <style>
-            *{
+            body{
                 font-family: 'Lato', sans-serif !important;
             }
 
@@ -62,7 +63,7 @@
                     <label class="btn btn-secondary active">
                         <input type="radio" name="mode" value="normal" autocomplete="off" checked>Normal
                     </label>
-                    <label class="btn btn-secondary">
+                    <label class="btn btn-secondary disabled" style="pointer-events: none;">
                         <input type="radio" name="mode" value="story" autocomplete="off">Story
                     </label>
                     <label class="btn btn-secondary">
