@@ -76,25 +76,29 @@
     <div class="row" id="button-thumbs">
         <div class="col-12">
             <div class="main mb-4" id="full-picture">
-                <div class="text align-self-center"></div>
                 <img src="assets/images/monthly.png" class="nice-border">
-                <div class="mask1">
-                    <span class="">
+                <div class="mask1 is-cover">
+                    <span>
                         <img class="pic" id="bg-1">
                     </span>
                 </div>
-                <div class="mask2">
-                    <span class="">
+                <div class="mask2 is-cover">
+                    <span>
                         <img class="pic" id="bg-2">
                     </span>
                 </div>
-                <div class="mask3">
-                    <span class="">
+                <div class="mask3 is-cover">
+                    <span>
                         <img class="pic" id="bg-3">
                     </span>
                 </div>
-                <div class="cover-text"></div>
-                <div class="cover-sub-text"></div>
+                <div class="is-not-cover">
+                    <span>
+                        <img class="pic" id="update-bg">
+                    </span> 
+                </div>
+                <div class="cover-text is-cover"></div>
+                <div class="cover-sub-text is-cover"></div>
             </div>
         </div>
         <div class="col-3 w-100 text-center my-2" id="cover-thumb"><button class="btn btn-secondary">Cover</button></div>
@@ -153,11 +157,6 @@ let objectCounter = 0;
 $(() => {
     const monthly = $("#mode-monthly")
 
-    const applyChanges = () => {
-        monthly.find(".cover-text").text(monthly.find("#cover-main-text").val());
-        monthly.find(".cover-sub-text").text(monthly.find("#cover-sub-text").val());
-    }
-
     const loadImage = (imgId, inputId) => {
         monthly.find(imgId).attr("src", $(inputId).val().trim());
         monthly.find(imgId).unbind("load")
@@ -191,52 +190,64 @@ $(() => {
         loadImage()
     })
 
-    monthly.find("input:not(.img-url)").on("input", () => { applyChanges() })
+    monthly.find("input:not(.img-url)").on("input", () => { openMonthlyUpdate({}, true) })
+
+    const openMonthlyUpdate = (data, isCover) => {
+        monthly.find(".nice-border").src(isCover ? "assets/images/monthly.png" : "assets/images/banner-monthly.png");
+        
+        if(isCover){
+            monthly.find(".is-cover").show();
+            monthly.find(".is-not-cover").hide();
+            monthly.find(".cover-text").text(monthly.find("#cover-main-text").val());
+            monthly.find(".cover-sub-text").text(monthly.find("#cover-sub-text").val());
+        } else {
+            monthly.find(".is-cover").hide();
+            monthly.find(".is-not-cover").show();
+            monthly.find("#update-bg").src(data.background)
+        }
+    }
 
     monthly.find("#add-monthly").click(() => {
         Swal.fire({
-            
-        })
-
-        objectCounter++
-
-        monthlyData.push({
-            id: objectCounter,
-            name: "",
-            date: "",
-            platform: ""
-        })
-
-        monthly.find("#monthly-updates").append(`
-            <div>
-                <hr>
-                <div class="form-group">
-                    <label>Game name</label>
-                    <input class="form-control" placeholder="Game name">
-                </div>
-                <div class="form-group">
-                    <label>Release date</label>
-                    <input class="form-control" placeholder="Release date">
-                </div>
-                <div class="form-group">    
-                    <label>Platform</label>
-                    <input class="form-control" placeholder="Platform">
-                </div>
-                <div class="form-group text-right">
-                    <button class="btn btn-danger" id="remove-monthly-${objectCounter}" data-id="${objectCounter}"><i class="fa fa-times mr-2"></i>Remove</button>
-                </div>
+            title:"New monthly update",
+            html:`
+            <div class="form-group">
+                <label>Background URL</label>
+                <input class="form-control" id="bg" placeholder="Background URL">
             </div>
-        `)
-
-        $("#button-thumbs").append(`
-            <div class="col-3 w-100 text-center my-2">
-                <button class="btn btn-secondary thumb" data-id="${objectCounter}">Post</button>
+            <div class="form-group">
+                <label>Game name</label>
+                <input class="form-control" id="name" placeholder="Game name">
             </div>
-        `)
+            <div class="form-group">
+                <label>Release date</label>
+                <input class="form-control" id="date" placeholder="Release date">
+            </div>
+            <div class="form-group">    
+                <label>Platform</label>
+                <input class="form-control" id="platform" placeholder="Platform">
+            </div>`,
+            showConfirmButton: true,
+            showCancelButton: true,
 
-        $(`#remove-monthly-${objectCounter}`).click(function() {
+        }).then((result) => {
+            objectCounter++;
+            monthlyData.push({
+                id: objectCounter,
+                name: $(Swal.getContent()).find("#name"),
+                date: $(Swal.getContent()).find("#date"),
+                platform: $(Swal.getContent()).find("#platform"),
+                background: $(Swal.getContent()).find("#bg")
+            })
+
+            $("#button-thumbs").append(`
+                <div class="col-3 w-100 text-center my-2">
+                    <button class="btn btn-secondary thumb" data-id="${objectCounter}">Post</button>
+                </div>
+            `)
         })
-
+        
+        openMonthlyUpdate(monthlyData[monthlyData.length-1], false);
         
     })
 
