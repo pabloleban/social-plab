@@ -194,6 +194,10 @@ $(() => {
     monthly.find("input:not(.img-url)").on("input", () => { applyChanges() })
 
     monthly.find("#add-monthly").click(() => {
+        Swal.fire({
+            
+        })
+
         objectCounter++
 
         monthlyData.push({
@@ -231,10 +235,6 @@ $(() => {
         `)
 
         $(`#remove-monthly-${objectCounter}`).click(function() {
-            const removeId = $(this).data("id");
-            monthlyData = monthlyData.filter(e => removeId != e.id)
-            $(this).parent().parent().remove()
-            $(`.thumb[data-id=${removeId}]`).parent().remove()
         })
 
         
