@@ -22,18 +22,16 @@
 
     .mode-normal .pic {
         position: absolute;
-        top: 90px;
-        padding: 0px 50px;
     }
 
     .mode-normal .mask{
-        clip-path: inset(80px 50px 370px 50px);
-        width: 100%;
-        height: 100%;
+        width: 993px;
+        height: 627px;
         position: absolute;
-        top: 0;
+        top: 80px;
+        overflow: hidden;
         z-index: 10;
-        left: 0;
+        left: 40px;
     }
 
     .mode-normal .text{
@@ -71,7 +69,7 @@
         <img src="assets/images/logo.png" class="logo">
         <img src="assets/images/marco.png" class="nice-border">
         <div class="mask">
-            <span class="d-flex justify-content-center">
+            <span class="d-flex h-100 w-100">
                 <img class="pic">
             </span>
         </div>
@@ -140,7 +138,7 @@
                     </div>
                     <div class="form-group">
                         <label for="imagesize">Image size - <span></span></label>
-                        <input type="range" min="0" max="100" value="0" class="custom-range" id="imagesize">
+                        <input type="range" min="50" max="200" value="100" class="custom-range" id="imagesize">
                     </div>
                 </div>
             </div>
@@ -175,8 +173,8 @@ $(() => {
         normal.find("#fontsize").parent().find("label span").text(fontSize);
         normal.find("#padding-v").parent().find("label span").text(padding.vertical);
         normal.find("#padding-h").parent().find("label span").text(padding.horizontal);
-        const imageSize = 1 + Number(normal.find("#imagesize").val()) / 100;
-        normal.find("#imagesize").parent().find("label span").text(100 + Number(normal.find("#imagesize").val())+"%");
+        const imageSize = Number(normal.find("#imagesize").val()) / 100;
+        normal.find("#imagesize").parent().find("label span").text(Number(normal.find("#imagesize").val())+"%");
         if(newText!= ""){
             normal.find(".text").html(newText)
         }
@@ -186,7 +184,7 @@ $(() => {
             padding: `${padding.vertical} ${padding.horizontal}`,
             "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : ""
         });
-        normal.find(".pic").css("zoom", `${imageSize}`);
+        normal.find(".pic").css("transform", `scale(${imageSize})`);
 
         normal.find(".pic-blured").css("filter", `blur(${prefs.blur}${allPrefs.find(p => p.name == "blur").unit}) brightness(${prefs.brightness}${allPrefs.find(p => p.name == "brightness").unit})`)
         allPrefs.forEach(p => {
@@ -200,16 +198,17 @@ $(() => {
         const width = this.width;
 
         normal.find(".pic").css({
-            top: "90px",
             left: 0,
             right: 0,
             bottom: 0
         })
 
         if(height > width){
-            normal.find(".pic").width("1080px")
+            normal.find(".pic").css("width", "100%")
+            normal.find(".pic").css("height", "auto")
         } else {
-            normal.find(".pic").height("610px")
+            normal.find(".pic").css("height", "100%")
+            normal.find(".pic").css("width", "auto")
         }
     })
     normal.find("#main-config input").on("input", () => { editPrefs(); applyChanges(); })
