@@ -111,6 +111,8 @@
             const loaded = []
 
             $(() => {
+                $("#version").text(`v${pkg.version}`)
+
                 $("input[name='mode']").change(() => {
                     const mode = $("input[name='mode']:checked").val();
                     
