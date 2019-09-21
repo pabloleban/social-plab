@@ -143,21 +143,23 @@
                 loadPrefs();
             })
 
-            const download = (element) => {
-                element = element[0]
-                $(element).css({
-                    "zoom":"1",
-                    "position":"fixed"
-                });
-                htmlToImage.toPng(element, {width: 1080, height: 1080}).then(dataUrl => {
+            const download = (element, filename) => {
+                return new Promise((resolve, reject) => {
+                    element = element[0]
                     $(element).css({
-                        "zoom":"",
-                        "position":"relative"
+                        "zoom":"1",
+                        "position":"fixed"
                     });
-                    
-                    ipcRenderer.send("download", {image: dataUrl, filename: $("#filename").val()});
-
-                });
+                    htmlToImage.toPng(element, {width: 1080, height: 1080}).then(dataUrl => {
+                        $(element).css({
+                            "zoom":"",
+                            "position":"relative"
+                        });
+                        
+                        ipcRenderer.send("download", {image: dataUrl, filename});
+                        resolve();
+                    }).catch(() => { reject() });
+                })
             }
 
             const showStatus = (statusClass, text) => {

@@ -31,6 +31,16 @@
         left: 0;
     }
 
+    .mode-normal .pic {
+        position: absolute;
+    }
+
+    .mode-monthly .mask2{
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
     .mode-monthly .mask3{
         clip-path: polygon(100% 0, 0 100%, 100% 100%);
         position: absolute;
@@ -62,7 +72,7 @@
         top: 720px;
         width: 210px;
         line-height: 162px;
-        left: 43px;
+        left: 34px;
         z-index: 116;
         font-weight: 900;
         position: absolute;
@@ -74,7 +84,7 @@
         line-height: 66px;
         top: 750px;
         width: 330px;
-        left: 273px;
+        left: 267px;
         z-index: 116;
         font-weight: 900;
         position: absolute;
@@ -85,7 +95,7 @@
         height: 54px;
         top: 804px;
         width: 250px;
-        left: 273px;
+        left: 267px;
         z-index: 116;
         font-weight: 900;
         position: absolute;
@@ -99,7 +109,7 @@
         top: 610px;
         right: 255px;
         font-size: 60px;
-        width: 200px;
+        width: 569px;
         z-index: 116;
         font-weight: 900;
         position: absolute;
@@ -185,10 +195,10 @@
         </div>
     </div>
     <div class="form-group mt-4">
-        <label for="text">File name</label>
+        <label for="text">Folder Name</label>
         <input class="form-control" placeholder="Nombre" id="filename" value="quicksave-news.png">
     </div>
-    <button class="btn btn-primary" onclick="download()">Download</button>
+    <button class="btn btn-primary" id="download">Download All Files</button>
 </div>
 
 <script>
@@ -200,7 +210,7 @@ $(() => {
     const monthly = $("#mode-monthly")
 
     const loadImage = (imgId, inputId = undefined) => {
-        if(inputId) monthly.find(imgId).attr("src", $(inputId).val().trim());
+        if(inputId) monthly.find(imgId).attr("src", monthly.find(inputId).val().trim());
         monthly.find(imgId).unbind("load")
         monthly.find(imgId).on("load", function(){
             const height = this.naturalHeight;
@@ -285,7 +295,8 @@ $(() => {
         }).then((result) => {
             if(result.value){
                 objectCounter++;
-                monthlyData.push({
+
+                const newGame = {
                     id: objectCounter,
                     name: $(Swal.getContent()).find("#name").val(),
                     date: $(Swal.getContent()).find("#date").val(),
@@ -293,11 +304,13 @@ $(() => {
                     background: $(Swal.getContent()).find("#bg").val(),
                     bgLeft: 0,
                     bgTop: 0
-                })
+                }
 
-                $("#button-thumbs").append(`
+                monthlyData.push(newGame)
+
+                monthly.find("#button-thumbs").append(`
                     <div class="col-3 w-100 text-center my-2">
-                        <button class="btn btn-secondary thumb btn-lg" data-id="${objectCounter}">Post</button>
+                        <button class="btn btn-secondary thumb btn-lg" data-id="${objectCounter}">${newGame.name}</button>
                     </div>
                 `).on('click',`.thumb[data-id=${objectCounter}]`, (event) => {
                     const elemID = $(event.currentTarget).data("id")
@@ -311,7 +324,7 @@ $(() => {
         })
     })
 
-    monthly.find("#cover-thumb button").click(() => {openMonthlyUpdate()})
+    monthly.find("#cover-thumb button").click(() => { openMonthlyUpdate() })
 
     openMonthlyUpdate();
 
@@ -324,6 +337,15 @@ $(() => {
         }
     });
 
+    monthly.find("#download").click(async () => {
+        monthly.find("#cover-thumb button").trigger("click")
+        await download(monthly.find('#full-picture'), "Cover.png")
+
+        monthlyData.forEach(async d => {
+            monthly.find(`.thumb[data-id='${d.id}']`).trigger("click")
+            await download(monthly.find('#full-picture'), d.name+".png")
+        })
+    })
 })
 
 </script>

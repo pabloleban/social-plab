@@ -148,7 +148,7 @@
         <label for="text">File name</label>
         <input class="form-control" placeholder="Nombre" id="filename" value="quicksave-news.png">
     </div>
-    <button class="btn btn-primary" onclick="download(normal.find('#full-picture'))">Download</button>
+    <button class="btn btn-primary" id="download">Download</button>
 </div>
 <script>
 
@@ -231,6 +231,10 @@ $(() => {
             "background-clip": ""
         }) 
     });
+
+    normal.find("#download").click(() => {
+        download(normal.find('#full-picture'), normal.find("#filename").val());
+    })
 })
 
 </script>
