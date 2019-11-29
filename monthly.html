@@ -1,5 +1,4 @@
 <style>
-
     .mode-monthly .main{
         position: relative;
         width: 1080px;
@@ -157,13 +156,31 @@
 </div>
 <div class="col-lg-12 col-xl-6">
     <div id="accordion">
-        <div class="card bg-dark text-white">
-            <div class="card-header bg-primary clickable" id="temp" data-toggle="collapse" data-target="#temp-config" aria-expanded="true" aria-controls="temp-config">
+        <div class="card bg-dark text-white" id="selected-update-configuration">
+            <div class="card-header bg-primary clickable" id="temp" data-toggle="collapse" data-target="#selected-update-config" aria-expanded="true" aria-controls="selected-update-config">
+                <h5 class="mb-0">
+                    Selected Update Configuration
+                </h5>
+            </div>
+            <div id="selected-update-config" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="selected-update-size">Size - <span></span></label>
+                        <input type="range" min="100" max="200" value="100" class="custom-range" id="selected-update-size">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-danger" id="remove-monthly"><i class="fas fa-trash pr-2"></i>Delete Monthly Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-dark text-white" id="cover-configuration">
+            <div class="card-header bg-primary clickable" data-toggle="collapse" data-target="#cover-config" aria-expanded="true" aria-controls="cover-config">
                 <h5 class="mb-0">
                     Cover Configuration
                 </h5>
             </div>
-            <div id="temp-config" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+            <div id="cover-config" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                 <div class="card-body">
                 
                     <div class="form-group">
@@ -186,7 +203,6 @@
                         <label for="fontsize">Cover Background Image 3</label>
                         <input class="form-control img-url" placeholder="Cover Background Image 3" id="cover-bg-3" value="https://d3ansictanv2wj.cloudfront.net/bot-day-background-700x600-ce7fb2df41cfbf6c827cf229da02882a.jpg">
                     </div>
-                    <div id="monthly-updates"></div>
                     <div class="form-group">
                         <button class="btn btn-primary" id="add-monthly"><i class="fas fa-plus pr-2"></i>Add monthly update</button>
                     </div>
@@ -216,13 +232,6 @@ $(() => {
             const height = this.naturalHeight;
             const width = this.width;
 
-            // normal.find(".pic").css({
-            //     top: "90px",
-            //     left: 0,
-            //     right: 0,
-            //     bottom: 0
-            // })
-
             if(height > width){
                 monthly.find(imgId).width("100%")
             } else {
@@ -242,7 +251,7 @@ $(() => {
         loadImage()
     })
 
-    monthly.find("input:not(.img-url)").on("input", () => { openMonthlyUpdate() })
+    monthly.find("#cover-config input:not(.img-url)").on("input", () => { openMonthlyUpdate() })
     monthly.find(".cover-bg").each((a, e) =>{
         $(e).parent().draggable()
     })
@@ -255,8 +264,12 @@ $(() => {
             monthly.find(".is-not-cover").hide();
             monthly.find(".cover-text").text(monthly.find("#cover-main-text").val());
             monthly.find(".cover-sub-text").text(monthly.find("#cover-sub-text").val());
+            monthly.find("#selected-update-configuration").hide();
+            monthly.find("#cover-configuration").show();
         } else {
             selectedUpdateID = data.id
+            monthly.find("#selected-update-configuration").show();
+            monthly.find("#cover-configuration").hide();
             monthly.find(".is-cover").hide();
             monthly.find(".is-not-cover").show();
             monthly.find("#update-bg").attr("src", data.background)
@@ -270,11 +283,12 @@ $(() => {
                 top: data.bgTop+"px",
                 left: data.bgLeft+"px"
             })
+            monthly.find("#update-bg").css("transform", `scale(${data.imgSize/100})`)
         }
     }
 
-    monthly.find("#add-monthly").click(() => {
-        Swal.fire({
+    monthly.find("#add-monthly").click(async () => {
+        const result = await Swal.fire({
             title:"New monthly update",
             html:`
             <div class="form-group">
@@ -291,40 +305,46 @@ $(() => {
             </div>`,
             showConfirmButton: true,
             showCancelButton: true,
-
-        }).then((result) => {
-            if(result.value){
-                objectCounter++;
-
-                const newGame = {
-                    id: objectCounter,
-                    name: $(Swal.getContent()).find("#name").val(),
-                    date: $(Swal.getContent()).find("#date").val(),
-                    platform: $(Swal.getContent()).find("#platform").val(),
-                    background: $(Swal.getContent()).find("#bg").val(),
-                    bgLeft: 0,
-                    bgTop: 0
-                }
-
-                monthlyData.push(newGame)
-
-                monthly.find("#button-thumbs").append(`
-                    <div class="col-3 w-100 text-center my-2">
-                        <button class="btn btn-secondary thumb btn-lg" data-id="${objectCounter}">${newGame.name}</button>
-                    </div>
-                `).on('click',`.thumb[data-id=${objectCounter}]`, (event) => {
-                    const elemID = $(event.currentTarget).data("id")
-                    openMonthlyUpdate(monthlyData.find(d => elemID == d.id));
-                })
-
-                loadImage("#update-bg")
-
-                openMonthlyUpdate(monthlyData[monthlyData.length-1]);
-            }
         })
+
+        if(!result.value) return;
+
+        objectCounter++;
+
+        const newGame = {
+            id: objectCounter,
+            name: $(Swal.getContent()).find("#name").val(),
+            date: $(Swal.getContent()).find("#date").val(),
+            platform: $(Swal.getContent()).find("#platform").val(),
+            background: $(Swal.getContent()).find("#bg").val(),
+            bgLeft: 0,
+            bgTop: 0,
+            imgSize: 100,
+        }
+
+        monthlyData.push(newGame)
+
+        monthly.find("#button-thumbs").append(`
+            <div class="col-3 w-100 text-center my-2">
+                <button class="btn btn-secondary thumb btn-lg" data-id="${objectCounter}">${newGame.name}</button>
+            </div>
+        `).on('click',`.thumb[data-id=${objectCounter}]`, event => {
+            const elemID = $(event.currentTarget).data("id")
+            openMonthlyUpdate(monthlyData.find(d => elemID == d.id));
+        })
+
+        loadImage("#update-bg")
+
+        openMonthlyUpdate(monthlyData[monthlyData.length-1]);
     })
 
     monthly.find("#cover-thumb button").click(() => { openMonthlyUpdate() })
+
+    monthly.find("#selected-update-size").on("input", () => {
+        const found = monthlyData.find(d => d.id == selectedUpdateID)
+        if(!found) return;
+        found.imgSize = $("#selected-update-size").val()        
+    })
 
     openMonthlyUpdate();
 
