@@ -193,15 +193,15 @@
                     </div>
                     <div class="form-group">
                         <label for="fontsize">Cover Background Image 1</label>
-                        <input class="form-control img-url" placeholder="Cover Background Image 1" id="cover-bg-1" value="https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-903ea3cb.jpg">
+                        <input class="form-control img-url" placeholder="Cover Background Image 1" img="#bg-1" value="https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-903ea3cb.jpg">
                     </div>
                     <div class="form-group">
                         <label for="fontsize">Cover Background Image 2</label>
-                        <input class="form-control img-url" placeholder="Cover Background Image 2" id="cover-bg-2" value="https://ak6.picdn.net/shutterstock/videos/1027713866/thumb/10.jpg">
+                        <input class="form-control img-url" placeholder="Cover Background Image 2" img="#bg-2" value="https://ak6.picdn.net/shutterstock/videos/1027713866/thumb/10.jpg">
                     </div>
                     <div class="form-group">
                         <label for="fontsize">Cover Background Image 3</label>
-                        <input class="form-control img-url" placeholder="Cover Background Image 3" id="cover-bg-3" value="https://d3ansictanv2wj.cloudfront.net/bot-day-background-700x600-ce7fb2df41cfbf6c827cf229da02882a.jpg">
+                        <input class="form-control img-url" placeholder="Cover Background Image 3" img="#bg-3" value="https://d3ansictanv2wj.cloudfront.net/bot-day-background-700x600-ce7fb2df41cfbf6c827cf229da02882a.jpg">
                     </div>
                     <div class="form-group">
                         <button class="btn btn-primary" id="add-monthly"><i class="fas fa-plus pr-2"></i>Add monthly update</button>
@@ -212,7 +212,7 @@
     </div>
     <div class="form-group mt-4">
         <label for="text">Folder Name</label>
-        <input class="form-control" placeholder="Nombre" id="filename" value="quicksave-news.png">
+        <input class="form-control" placeholder="Nombre" id="filename" value="Monthly Update">
     </div>
     <button class="btn btn-primary" id="download">Download All Files</button>
 </div>
@@ -243,18 +243,29 @@ $(() => {
     monthly.find("#cover-sub-text").val(new Date().getFullYear());
     monthly.find("#cover-main-text").val(`LO MÁS ESPERADO DE ${new Date().toLocaleString("es-es", {month: "long"}).toUpperCase()}`);
 
-    loadImage("#bg-1", "#cover-bg-1");
-    loadImage("#bg-2", "#cover-bg-2");
-    loadImage("#bg-3", "#cover-bg-3");
+    $(".img-url").each((i, e) => {
+        const img = $($(e).attr("img"));
 
-    monthly.find("#bg-1, #bg-2, #bg-3").on("input", () => {
-        loadImage()
+        $(e).on("input", () =>  {
+            img.attr("src", $(e).val())
+        })
+
+        img.on("load", function(){
+            const height = this.naturalHeight;
+            const width = this.width;
+
+            if(height > width){
+                img.width("100%")
+            } else {
+                img.height("100%")
+            }
+        })
+
+        img.parent().draggable()
+
+        $(e).trigger("input");
     })
 
-    monthly.find("#cover-config input:not(.img-url)").on("input", () => { openMonthlyUpdate() })
-    monthly.find(".cover-bg").each((a, e) =>{
-        $(e).parent().draggable()
-    })
     const openMonthlyUpdate = (data) => {
         monthly.find(".nice-border").attr("src", !data ? "assets/images/monthly.png" : "assets/images/banner-monthly.png");
         
@@ -365,6 +376,12 @@ $(() => {
             monthly.find(`.thumb[data-id='${d.id}']`).trigger("click")
             await download(monthly.find('#full-picture'), d.name+".png")
         })
+    })
+
+    monthly.find("#remove-monthly").click(() => {
+        monthlyData = monthlyData.filter(d => d.id != selectedUpdateID)
+        $(`#button-thumbs button[data-id='${selectedUpdateID}']`).parent().remove();
+        openMonthlyUpdate();
     })
 })
 
