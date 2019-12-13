@@ -86,11 +86,12 @@
             const allPrefs = [
                 {name: "brightness", field: "#brightness", unit: "%"},
                 {name: "blur", field: "#blur", unit: "px"},
-                {name: "textshadow", field: "#text-shadow", unit: ""}
+                {name: "textshadow", field: "#text-shadow", unit: ""},
+                {name: "centeredtext", field: "#centered-text", unit: ""}
             ]
 
             const getPrefValue = p => {
-                if($(p.field).is("input[type='checkbox']")){
+                if($(p.field).is(":checkbox")){
                     return $(p.field).is(":checked").toString()
                 } else {
                     return $(p.field).val()
@@ -100,7 +101,7 @@
             const loadPrefs = () => {
                 allPrefs.forEach(p => {
                     prefs[p.name] = localStorage.getItem(`pref-${p.name}`) || getPrefValue(p)
-                    if($(p.field).is("input[type='checkbox']")){
+                    if($(p.field).is(":checkbox")){
                         $(p.field).attr("checked", prefs[p.name] == "true")
                     } else {
                         $(p.field).val(prefs[p.name]); 
@@ -139,8 +140,6 @@
                 })
 
                 $("input[name='mode']").trigger("change")
-
-                loadPrefs();
             })
 
             const download = (element, filename) => {

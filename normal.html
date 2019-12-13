@@ -97,6 +97,10 @@
                         <input type="checkbox" class="custom-control-input" id="text-shadow" name="text-shadow">
                         <label class="custom-control-label" for="text-shadow">Text shadow</label>
                     </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="centered-text" name="centered-text">
+                        <label class="custom-control-label" for="centered-text">Centered Text</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -162,6 +166,8 @@ const editPrefs = () => {
 }
 
 $(() => {
+    loadPrefs();
+
     const applyChanges = () => {
         const newText = normal.find("#text").val().trim().replace(new RegExp(/##((.|\n)*?)##/, 'g'), `<span style='font-style: italic;'>$1</span>`);
         const fontSize = normal.find("#fontsize").val()+"px";
@@ -181,7 +187,8 @@ $(() => {
         normal.find(".text").css({
             "font-size": fontSize,
             padding: `${padding.vertical} ${padding.horizontal}`,
-            "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : ""
+            "text-shadow": prefs.textshadow == "true" ? "3px 4px #000000" : "",
+            "text-align": prefs.centeredtext == "true" ? "center" : "",
         });
         normal.find(".pic").css("transform", `scale(${imageSize})`);
 
