@@ -46,7 +46,7 @@
     "jquery-textfill": "^0.6.0",
     "jquery-ui-dist": "^1.12.1",
     "lato-font": "^3.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "popper.js": "^1.15.0",
     "sweetalert2": "^8.16.3"
   }
